@@ -1,10 +1,15 @@
 {
   "files": {
-    "main.js": "/padel-front/static/js/main.2df491ce.js",
+    "main.css": "/padel-front/static/css/main.00641fc6.css",
+    "main.js": "/padel-front/static/js/main.cc71bddc.js",
+    "static/media/JUST Sans ExBold.woff": "/padel-front/static/media/JUST Sans ExBold.0f3229f69831442d03f6.woff",
+    "static/media/JUST Sans Regular.woff": "/padel-front/static/media/JUST Sans Regular.bbe8ea00c0d928aa10f4.woff",
     "index.html": "/padel-front/index.html",
-    "main.2df491ce.js.map": "/padel-front/static/js/main.2df491ce.js.map"
+    "main.00641fc6.css.map": "/padel-front/static/css/main.00641fc6.css.map",
+    "main.cc71bddc.js.map": "/padel-front/static/js/main.cc71bddc.js.map"
   },
   "entrypoints": [
-    "static/js/main.2df491ce.js"
+    "static/css/main.00641fc6.css",
+    "static/js/main.cc71bddc.js"
   ]
 }
