@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/padel-front/static/css/main.d3b4e619.css",
-    "main.js": "/padel-front/static/js/main.51d5be13.js",
+    "main.css": "/padel-front/static/css/main.e3855b72.css",
+    "main.js": "/padel-front/static/js/main.8fce9aac.js",
     "static/media/CanelaDeck-Bold-Trial.otf": "/padel-front/static/media/CanelaDeck-Bold-Trial.c816cb4e10800f09b8e3.otf",
     "static/media/CanelaDeck-MediumItalic-Trial.otf": "/padel-front/static/media/CanelaDeck-MediumItalic-Trial.bf716d3dbb2e2f8c94ac.otf",
     "static/media/CanelaDeck-Medium-Trial.otf": "/padel-front/static/media/CanelaDeck-Medium-Trial.facdbbd5b40c5bf514f9.otf",
@@ -41,11 +41,11 @@
     "static/media/JUST Sans ExBold.woff": "/padel-front/static/media/JUST Sans ExBold.0f3229f69831442d03f6.woff",
     "static/media/JUST Sans Regular.woff": "/padel-front/static/media/JUST Sans Regular.bbe8ea00c0d928aa10f4.woff",
     "index.html": "/padel-front/index.html",
-    "main.d3b4e619.css.map": "/padel-front/static/css/main.d3b4e619.css.map",
-    "main.51d5be13.js.map": "/padel-front/static/js/main.51d5be13.js.map"
+    "main.e3855b72.css.map": "/padel-front/static/css/main.e3855b72.css.map",
+    "main.8fce9aac.js.map": "/padel-front/static/js/main.8fce9aac.js.map"
   },
   "entrypoints": [
-    "static/css/main.d3b4e619.css",
-    "static/js/main.51d5be13.js"
+    "static/css/main.e3855b72.css",
+    "static/js/main.8fce9aac.js"
   ]
 }
