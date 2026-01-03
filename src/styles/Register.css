@@ -1,0 +1,598 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Noto+Sans+Georgian:wght@100..900&display=swap');
+
+/* ========================
+   REGISTER CONTAINER
+   ======================== */
+.register-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f1f1f1 0%, #e8e8e8 100%);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  padding-top: 200px;
+}
+
+/* ========================
+   LANGUAGE TOGGLE
+   ======================== */
+.register-language-toggle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 12px 24px;
+  background: #95392f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.register-language-toggle:hover {
+  background: #7a2e26;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+/* ========================
+   REGISTER CARD
+   ======================== */
+.register-card {
+  width: 100%;
+  max-width: 550px;
+  background: white;
+  border-radius: 2rem;
+  border-top-right-radius: 6rem;
+  border-bottom-left-radius: 6rem;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 2;
+}
+
+/* ========================
+   PROGRESS INDICATOR
+   ======================== */
+.register-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active {
+  opacity: 1;
+}
+
+.progress-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active .progress-circle {
+  background: #95392f;
+  color: white;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  color: #666;
+}
+
+.progress-step.active .progress-label {
+  color: #95392f;
+}
+
+.progress-line {
+  width: 60px;
+  height: 2px;
+  background: #e0e0e0;
+  margin-bottom: 1.5rem;
+}
+
+/* ========================
+   HERO SECTION
+   ======================== */
+.register-hero-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-title {
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #95392f;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.register-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #666;
+  font-weight: 400;
+}
+
+/* ========================
+   MESSAGE DISPLAY
+   ======================== */
+.register-message {
+  background: #95392f;
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================
+   FORM
+   ======================== */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.register-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #95392f;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.register-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.register-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.register-input:focus {
+  border-color: #95392f;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(149, 57, 47, 0.1);
+}
+
+.register-code-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+  font-weight: 700;
+}
+
+.register-code-info {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.register-eye-button {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.register-eye-button:hover {
+  transform: scale(1.1);
+}
+
+/* ========================
+   BUTTONS
+   ======================== */
+.register-submit-button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: white;
+  background: #95392f;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.register-submit-button:hover {
+  background: #7a2e26;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+.register-submit-button:active {
+  transform: translateY(0);
+}
+
+.register-resend-button {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 0.95rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: #95392f;
+  background: transparent;
+  border: 2px solid #95392f;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.register-resend-button:hover {
+  background: #95392f;
+  color: white;
+}
+
+.register-back-button {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 0.95rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: #666;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-back-button:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* ========================
+   LOGIN LINK
+   ======================== */
+.register-login-container {
+  text-align: center;
+  margin-top: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+}
+
+.register-login-text {
+  color: #666;
+}
+
+.register-login-link {
+  color: #95392f;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.register-login-link:hover {
+  color: #7a2e26;
+  text-decoration: underline;
+}
+
+/* ========================
+   DECORATIVE CIRCLES
+   ======================== */
+.register-decor-circle-1 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(149, 57, 47, 0.1) 0%, rgba(149, 57, 47, 0.05) 100%);
+  top: -100px;
+  left: -100px;
+  z-index: 0;
+}
+
+.register-decor-circle-2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(149, 57, 47, 0.08) 0%, rgba(149, 57, 47, 0.03) 100%);
+  bottom: -150px;
+  right: -150px;
+  z-index: 0;
+}
+
+/* ========================
+   MOBILE RESPONSIVENESS
+   ======================== */
+@media (max-width: 768px) {
+  .register-container {
+    padding-top: 120px;
+  }
+
+  .register-language-toggle {
+    top: 1rem;
+    right: 1rem;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+
+  .register-card {
+    padding: 2.5rem 2rem;
+    border-top-right-radius: 4rem;
+    border-bottom-left-radius: 4rem;
+  }
+
+  .register-title {
+    font-size: 2rem;
+  }
+
+  .register-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .progress-label {
+    font-size: 0.7rem;
+  }
+
+  .progress-line {
+    width: 40px;
+  }
+
+  .register-input {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .register-submit-button {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .register-container {
+    padding-top: 120px;
+  }
+
+  .register-card {
+    padding: 2rem 1.5rem;
+    border-top-right-radius: 3rem;
+    border-bottom-left-radius: 3rem;
+  }
+
+  .register-title {
+    font-size: 1.75rem;
+  }
+
+  .register-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .register-progress {
+    gap: 0.5rem;
+  }
+
+  .progress-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .progress-label {
+    font-size: 0.65rem;
+  }
+
+  .progress-line {
+    width: 30px;
+  }
+
+  .register-label {
+    font-size: 0.8rem;
+  }
+
+  .register-input {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .register-code-input {
+    font-size: 1.3rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .register-submit-button,
+  .register-resend-button,
+  .register-back-button {
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .register-login-container {
+    font-size: 0.85rem;
+  }
+
+  .register-decor-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: -80px;
+    left: -80px;
+  }
+
+  .register-decor-circle-2 {
+    width: 250px;
+    height: 250px;
+    bottom: -100px;
+    right: -100px;
+  }
+}
+
+
+
+/* ========================
+   VERIFICATION ROW
+   ======================== */
+.register-verification-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.register-code-wrapper {
+  flex: 1;
+}
+
+.register-send-code-button {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: white;
+  background: #95392f;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: fit-content;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.register-send-code-button:hover {
+  background: #7a2e26;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+.register-send-code-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.register-resend-button {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: #95392f;
+  background: transparent;
+  border: 2px solid #95392f;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.register-resend-button:hover {
+  background: #95392f;
+  color: white;
+}
+
+.register-resend-button:disabled {
+  border-color: #ccc;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.register-submit-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Mobile adjustments for verification row */
+@media (max-width: 540px) {
+  .register-verification-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .register-send-code-button,
+  .register-resend-button {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.85rem;
+  }
+}

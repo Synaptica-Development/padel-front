@@ -1,0 +1,348 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Noto+Sans+Georgian:wght@100..900&display=swap');
+
+/* ========================
+   LOGIN CONTAINER
+   ======================== */
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f1f1f1 0%, #e8e8e8 100%);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ========================
+   LANGUAGE TOGGLE
+   ======================== */
+.login-language-toggle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 12px 24px;
+  background: #95392f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.login-language-toggle:hover {
+  background: #7a2e26;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+/* ========================
+   LOGIN CARD
+   ======================== */
+.login-card {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 2rem;
+  border-top-right-radius: 6rem;
+  border-bottom-left-radius: 6rem;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 2;
+}
+
+/* ========================
+   HERO SECTION
+   ======================== */
+.login-hero-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-title {
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #95392f;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #666;
+  font-weight: 400;
+}
+
+/* ========================
+   FORM
+   ======================== */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #95392f;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.login-input:focus {
+  border-color: #95392f;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(149, 57, 47, 0.1);
+}
+
+.login-eye-button {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.login-eye-button:hover {
+  transform: scale(1.1);
+}
+
+/* ========================
+   FORGOT PASSWORD
+   ======================== */
+.login-forgot-password-container {
+  text-align: right;
+  margin-top: -0.5rem;
+}
+
+.login-forgot-password {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #95392f;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.login-forgot-password:hover {
+  color: #7a2e26;
+  text-decoration: underline;
+}
+
+/* ========================
+   SUBMIT BUTTON
+   ======================== */
+.login-submit-button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: white;
+  background: #95392f;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(149, 57, 47, 0.3);
+}
+
+.login-submit-button:hover {
+  background: #7a2e26;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+.login-submit-button:active {
+  transform: translateY(0);
+}
+
+/* ========================
+   REGISTER LINK
+   ======================== */
+.login-register-container {
+  text-align: center;
+  margin-top: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+}
+
+.login-register-text {
+  color: #666;
+}
+
+.login-register-link {
+  color: #95392f;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.login-register-link:hover {
+  color: #7a2e26;
+  text-decoration: underline;
+}
+
+/* ========================
+   DECORATIVE CIRCLES
+   ======================== */
+.login-decor-circle-1 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(149, 57, 47, 0.1) 0%, rgba(149, 57, 47, 0.05) 100%);
+  top: -100px;
+  left: -100px;
+  z-index: 0;
+}
+
+.login-decor-circle-2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(149, 57, 47, 0.08) 0%, rgba(149, 57, 47, 0.03) 100%);
+  bottom: -150px;
+  right: -150px;
+  z-index: 0;
+}
+
+/* ========================
+   MOBILE RESPONSIVENESS
+   ======================== */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1.5rem;
+  }
+
+  .login-language-toggle {
+    top: 1rem;
+    right: 1rem;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+
+  .login-card {
+    padding: 2.5rem 2rem;
+    border-top-right-radius: 4rem;
+    border-bottom-left-radius: 4rem;
+  }
+
+  .login-title {
+    font-size: 2rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .login-input {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .login-submit-button {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .login-container {
+    padding: 1rem;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+    border-top-right-radius: 3rem;
+    border-bottom-left-radius: 3rem;
+  }
+
+  .login-title {
+    font-size: 1.75rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .login-label {
+    font-size: 0.8rem;
+  }
+
+  .login-input {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .login-submit-button {
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .login-register-container {
+    font-size: 0.85rem;
+  }
+
+  .login-decor-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: -80px;
+    left: -80px;
+  }
+
+  .login-decor-circle-2 {
+    width: 250px;
+    height: 250px;
+    bottom: -100px;
+    right: -100px;
+  }
+}

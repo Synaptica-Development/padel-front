@@ -1,0 +1,533 @@
+@import url('https://fonts.cdnfonts.com/css/diaspora');
+
+
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans Regular.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans ExBold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA CONDENSED FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA DECK FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ========================================
+   USAGE EXAMPLES
+   ======================================== */
+
+/*
+To use Canela Condensed:
+  font-family: 'Canela Condensed', serif;
+  font-weight: 400; (or 100, 300, 500, 700, 900)
+  font-style: normal; (or italic)
+
+To use Canela Deck:
+  font-family: 'Canela Deck', serif;
+  font-weight: 400; (or 100, 300, 500, 700, 900)
+  font-style: normal; (or italic)
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.landing-body {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+}
+
+/* Overlay for better text readability */
+.landing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(149, 57, 47, 0.388) 0%,
+    rgba(149, 57, 47, 0.393) 50%,
+    rgba(149, 57, 47, 0.558) 100%
+  );
+  z-index: 1;
+}
+
+.landing-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #ffffff;
+  max-width: 900px;
+  padding: 40px 20px;
+}
+
+.landing-title {
+  font-family: 'Canela Deck', serif;
+  font-weight: 100;
+  font-size: 6.5rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+}
+
+.landing-subtitle {
+  font-family: 'Canela Deck', serif;
+  font-weight: 100;
+  font-size: 48px;
+  color: #ffffff;
+  margin-bottom: 30px;
+  text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.landing-description {
+  font-family: 'JUST Sans', sans-serif;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  max-width: 900px;
+  margin: 0 auto;
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.116);
+}
+
+/* Tablet Styles */
+@media (max-width: 991px) {
+  .landing-title {
+    font-size: 56px;
+  }
+
+  .landing-subtitle {
+    font-size: 38px;
+  }
+
+  .landing-description {
+    font-size: 18px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .landing-content {
+    padding: 30px 15px;
+  }
+
+  .landing-title {
+    font-size: 42px;
+    margin-bottom: 15px;
+  }
+
+  .landing-subtitle {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .landing-description {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-title {
+    font-size: 42px;
+  }
+
+  .landing-subtitle {
+    font-size: 28px;
+  }
+
+  .landing-description {
+    font-size: 15px;
+  }
+}
+
+
+
+
+.landing-book-btn {
+  margin-top: 30px;
+  background-color: #ffffff;
+  font-family: 'JUST Sans', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 300;
+  line-height: 1.3em;
+  border-radius: 22px;
+  letter-spacing: 1px;
+  padding: 16px 28px;
+  color: #95392F;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.landing-book-btn:hover {
+  background: linear-gradient(135deg, #ed968c 0%, #cb6d62 50%, #5e2419 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.3);
+  color: #ffffff;
+}
+
+/* Tablet Styles */
+@media (max-width: 991px) {
+  .landing-book-btn {
+    font-size: 24px;
+    padding: 16px 24px;
+    border-radius: 20px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .landing-book-btn {
+    font-size: 22px;
+    padding: 12px 18px;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-book-btn {
+    font-size: 20px;
+    padding: 10px 16px;
+    border-radius: 16px;
+  }
+}

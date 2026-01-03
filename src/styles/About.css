@@ -1,0 +1,220 @@
+/* Main Wrapper: Flex container to hold Left and Right panels */
+.about-grid-wrapper {
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  gap: 20px;
+  display: flex;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f1f1f1;
+  overflow: hidden; /* Prevents scroll bars inside the component */
+  padding: 40px;
+}
+
+/* ========================
+   LEFT PANEL (The Big One)
+   ======================== */
+.about-left-panel {
+  width: 450px; /* Approx 400-450px looks best */
+  height: 100%;
+  position: relative;
+  flex-shrink: 0; /* Prevents it from shrinking */
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.about-left-bg {
+  position: absolute;
+  border-radius: 1.5rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.about-left-overlay {
+  position: absolute;
+  border-radius: 1.5rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Gradient to make text readable */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+  z-index: 1;
+}
+
+.about-left-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers vertically */
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.about-title-large {
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  line-height: 0.9;
+}
+
+/* Book Now Button */
+.about-book-btn {
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-weight: 700;
+  color: white;
+  background-color: #95392f; /* Your theme color */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.about-book-btn:hover {
+  background-color: white;
+  color: #95392f;
+}
+
+/* ========================
+   RIGHT PANEL (The 4 Cubes)
+   ======================== */
+.about-right-panel {
+  flex-grow: 1; /* Takes remaining width */
+  height: 100%;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-row {
+  height: 50%; /* Each row is 50% height */
+  gap: 20px;
+  width: 100%;
+  display: flex;
+}
+
+/* ========================
+   CUBE STYLES
+   ======================== */
+.about-cube {
+  height: 100%;
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for cubes */
+.about-cube:hover {
+  filter: brightness(1.1);
+}
+
+.cube-content {
+  max-width: 100%;
+}
+
+/* Width Utilities */
+.width-30 { width: 30%; }
+.width-70 { width: 70%; }
+
+/* Theme Utilities for colors */
+.dark-theme {
+  background-color: #1a1a1a;
+  color: white;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.light-theme {
+  background-color: #252525; /* Slightly lighter dark grey */
+  color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.accent-theme {
+  background-color: #95392f; /* Theme Red */
+  color: white;
+}
+
+/* Text Styles */
+.about-cube h3 {
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #ffffff; /* Red title on grey bg */
+}
+
+.light-theme h3 {
+  color: #ffffff;
+}
+
+.about-cube p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.cube-number {
+  font-size: 4rem;
+  font-weight: 900;
+  opacity: 0.2;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.about-closing-text {
+  font-size: 1.3rem !important;
+  font-weight: 700;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ========================
+   MOBILE RESPONSIVENESS
+   ======================== */
+@media (max-width: 1024px) {
+  .about-grid-wrapper {
+    flex-direction: column; /* Stack everything vertically */
+    height: auto; /* Remove fixed height */
+  }
+
+  /* Make Left Panel a Header */
+  .about-left-panel {
+    width: 100%;
+    height: 60vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Stack the rows vertically */
+  .about-row {
+    flex-direction: column;
+    height: auto;
+  }
+
+  /* Make all cubes full width on mobile */
+  .width-30, .width-70 {
+    width: 100%;
+    min-height: 300px; /* Give them some height */
+  }
+
+  .about-cube {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 30px;
+  }
+}
