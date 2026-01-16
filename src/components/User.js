@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Book from './Book';
+import Entry from './Entry';
 import '../styles/User.css';
 
 function User() {
@@ -117,8 +118,7 @@ function User() {
         )}
         {activeSection === 'entry' && (
           <div className="entry-container active">
-            <h2>QR Code</h2>
-            {/* Add your QR code content here */}
+            <Entry />
           </div>
         )}
         {activeSection === 'current-orders' && (
