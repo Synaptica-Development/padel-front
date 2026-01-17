@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from './LanguageContext';
 import '../styles/About.css';
 import { Link } from 'react-router-dom';
-import { id } from '../../../../litox/litox-web/node_modules/webpack/lib/util/concatenate';
+
 
 const pic = process.env.PUBLIC_URL + '/grid1.png';
 const pic2 = process.env.PUBLIC_URL + '/grid2.png';

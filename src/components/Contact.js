@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import '../styles/Contact.css'
-import { id } from '../../../../litox/litox-web/node_modules/webpack/lib/util/concatenate';
+
 
 const arrow = process.env.PUBLIC_URL+'/arrow-down.png'
 const contactPic = process.env.PUBLIC_URL+'/contact.png'
