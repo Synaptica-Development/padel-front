@@ -71,7 +71,7 @@ function ForgotPassword() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const API_BASE_URL = 'http://16.171.12.216:5000';
+  const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
 
   const t = forgotPasswordTranslations[language];
 

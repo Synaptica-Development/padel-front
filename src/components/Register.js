@@ -69,7 +69,7 @@ const registerTranslations = {
   }
 };
 
-const API_BASE_URL = 'http://16.171.12.216:5000/api';
+const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
 
 function Register() {
   const { language } = useLanguage();
