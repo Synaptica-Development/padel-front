@@ -1,7 +1,7 @@
 // ForgotPassword.jsx
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Password.css';
 
 const forgotPasswordTranslations = {
@@ -22,7 +22,7 @@ const forgotPasswordTranslations = {
     backToLogin: 'Back to Login',
     codeSent: 'Code sent to your phone!',
     codeResent: 'Code resent!',
-    passwordReset: 'Password reset successful!',
+    passwordReset: 'Password reset successful! Redirecting to login...',
     step1: 'Step 1: Phone Number',
     step2: 'Step 2: Verification',
     step3: 'Step 3: New Password',
@@ -47,7 +47,7 @@ const forgotPasswordTranslations = {
     backToLogin: 'შესვლაზე დაბრუნება',
     codeSent: 'კოდი გამოგზავნილია!',
     codeResent: 'კოდი ხელახლა გამოგზავნილია!',
-    passwordReset: 'პაროლი წარმატებით აღდგა!',
+    passwordReset: 'პაროლი წარმატებით აღდგა! გადამისამართება...',
     step1: 'ნაბიჯი 1: ტელეფონის ნომერი',
     step2: 'ნაბიჯი 2: ვერიფიკაცია',
     step3: 'ნაბიჯი 3: ახალი პაროლი',
@@ -59,6 +59,7 @@ const forgotPasswordTranslations = {
 
 function ForgotPassword() {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1: phone, 2: verification, 3: new password
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -295,8 +296,10 @@ function ForgotPassword() {
       console.log('Password changed successfully:', data);
 
       setMessage(t.passwordReset);
+      
+      // Redirect to login page after 2 seconds
       setTimeout(() => {
-        window.location.href = '/login';
+        navigate('/login');
       }, 2000);
       
     } catch (err) {

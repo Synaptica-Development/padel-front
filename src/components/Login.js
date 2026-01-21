@@ -74,10 +74,14 @@ function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+      console.log('Attempting login...');
+      
+      const response = await fetch(`${API_BASE_URL}/api/Auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'accept': '*/*',
+          'X-Language': language // Send language preference
         },
         body: JSON.stringify({
           phonenumber: phoneNumber,
@@ -88,77 +92,86 @@ function Login() {
       console.log('Login Response Status:', response.status);
       console.log('Login Response OK:', response.ok);
 
-      const contentType = response.headers.get("content-type");
-      let data = null;
-      
-      if (contentType && contentType.includes("application/json")) {
+      if (!response.ok) {
         try {
-          data = await response.json();
-          console.log('Login Response Data:', data);
-        } catch (jsonError) {
-          console.error('JSON parse error:', jsonError);
-          // If response is ok but JSON parsing fails
-          if (response.ok) {
-            console.log('✅ Login successful (no JSON response)');
-            setSuccessMessage(t.loginSuccess);
-            setTimeout(() => {
-              navigate('/');
-            }, 1500);
-            setIsLoading(false);
-            return;
-          }
-          // If response is not ok and JSON parsing fails
-          console.error('❌ Login failed - Invalid response format');
-          setError(t.loginError + ' (Invalid response format)');
-          setIsLoading(false);
-          return;
+          const errorData = await response.json();
+          console.error('Login failed:', errorData);
+          const errorMessage = errorData?.message || t.loginError;
+          setError(errorMessage);
+        } catch (e) {
+          console.error('Login failed - no JSON response');
+          setError(t.loginError);
         }
+        setIsLoading(false);
+        return;
       }
 
-      if (response.ok) {
-        // Login successful
-        console.log('✅ Login successful');
+      // Parse successful response
+      const data = await response.json();
+      console.log('Login Response Data:', data);
+
+      if (data?.token) {
+        console.log('✅ Login successful - Token received');
         
-        // Store the token in localStorage
-        if (data?.token) {
-          localStorage.setItem('authToken', data.token);
-          console.log('Token stored:', data.token);
+        // Store the token and expiration with Bearer prefix
+        const bearerToken = `Bearer ${data.token}`;
+        localStorage.setItem('authToken', bearerToken);
+        localStorage.setItem('tokenExpiration', data.expirationDate);
+        
+        console.log('Token stored successfully');
+        
+        // Validate token immediately (send just the token without Bearer for validation)
+        const isValid = await validateToken(data.token);
+        
+        if (isValid) {
+          console.log('✅ Token validated successfully');
+          setSuccessMessage(t.loginSuccess);
+          
+          // Redirect to user dashboard after a short delay
+          setTimeout(() => {
+            navigate('/user');
+          }, 1500);
+        } else {
+          console.error('❌ Token validation failed');
+          setError('Token validation failed. Please try again.');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('tokenExpiration');
         }
-        
-        // Store expiration date if provided
-        if (data?.expirationDate) {
-          localStorage.setItem('tokenExpiration', data.expirationDate);
-          console.log('Token expiration:', data.expirationDate);
-        }
-        
-        // Store any additional user data if provided
-        if (data?.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-          console.log('User data stored:', data.user);
-        }
-        
-        setSuccessMessage(t.loginSuccess);
-        
-        // Redirect to home page after a short delay
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
       } else {
-        // Login failed
-        const errorMessage = data?.message || data?.error || `Error ${response.status}: ${response.statusText}`;
-        console.error('❌ Login failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          errorMessage: errorMessage,
-          fullResponse: data
-        });
-        setError(errorMessage || t.loginError);
+        console.error('❌ No token in response');
+        setError(t.loginError);
       }
     } catch (err) {
       console.error('❌ Login failed - Network or unexpected error:', err);
       setError(t.networkError);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Validate token function
+  const validateToken = async (token) => {
+    try {
+      console.log('Validating token...');
+      
+      const response = await fetch(`${API_BASE_URL}/api/Auth/validate-token?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+        headers: {
+          'accept': '*/*',
+          'X-Language': language
+        }
+      });
+
+      if (response.ok) {
+        const isValid = await response.json();
+        console.log('Token validation result:', isValid);
+        return isValid === true;
+      }
+      
+      return false;
+    } catch (err) {
+      console.error('Token validation error:', err);
+      return false;
     }
   };
 

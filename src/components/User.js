@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Book from './Book';
 import Entry from './Entry';
+import History from './History';
 import '../styles/User.css';
 
 function User() {
@@ -129,8 +130,7 @@ function User() {
         )}
         {activeSection === 'order-history' && (
           <div className="order-history-container active">
-            <h2>Order History</h2>
-            {/* Add your order history content here */}
+            <History />
           </div>
         )}
         {activeSection === 'settings' && (

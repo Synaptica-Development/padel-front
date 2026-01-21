@@ -29,7 +29,7 @@ const registerTranslations = {
     passwordRequirement: 'Password must contain at least one special character (e.g., !, @, #, $)',
     registering: 'Creating account...',
     sendingCode: 'Sending code...',
-    registrationSuccess: 'Registration successful!',
+    registrationSuccess: 'Registration successful! Redirecting to login...',
     registrationError: 'Registration failed. Please try again.',
     fillAllFields: 'Please fill all fields',
     verificationError: 'Verification failed. Please check the code.',
@@ -120,11 +120,14 @@ function Register() {
     setIsSendingCode(true);
 
     try {
-      // Step 1: Register and get key
-      const registerResponse = await fetch(`${API_BASE_URL}/Auth/register`, {
+      console.log('Step 1: Registering user...');
+      
+      // Step 1: Register user
+      const registerResponse = await fetch(`${API_BASE_URL}/api/Auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'accept': '*/*'
         },
         body: JSON.stringify({
           name: firstName,
@@ -135,18 +138,27 @@ function Register() {
         })
       });
 
-      const contentType = registerResponse.headers.get("content-type");
-      let registerData = null;
-      
-      if (contentType && contentType.includes("application/json")) {
-        registerData = await registerResponse.json();
-      }
+      console.log('Register Response Status:', registerResponse.status);
 
       if (!registerResponse.ok) {
-        setError(registerData?.message || t.registrationError);
+        try {
+          const errorData = await registerResponse.json();
+          console.error('Register failed:', errorData);
+          
+          // Show the actual error message from the server
+          const errorMessage = errorData?.message || t.registrationError;
+          setError(errorMessage);
+        } catch (e) {
+          const errorText = await registerResponse.text();
+          console.error('Register failed:', errorText);
+          setError(t.registrationError);
+        }
         setIsSendingCode(false);
         return;
       }
+
+      const registerData = await registerResponse.json();
+      console.log('Register Response:', registerData);
 
       // Extract the key from response
       const key = registerData?.key;
@@ -159,17 +171,33 @@ function Register() {
       }
 
       setEncryptedKey(key);
-      console.log('Encrypted key received:', key);
+      console.log('✅ Registration successful. Key received:', key);
 
-      // Step 2: Automatically send OTP using the key
-      const otpResponse = await fetch(`${API_BASE_URL}/Auth/send-otp?key=${encodeURIComponent(key)}`, {
+      // Step 2: Send OTP using the key
+      console.log('Step 2: Sending OTP...');
+      
+      const otpResponse = await fetch(`${API_BASE_URL}/api/Auth/send-otp?key=${encodeURIComponent(key)}`, {
         method: 'POST',
         headers: {
           'accept': '*/*',
         }
       });
 
-      if (otpResponse.ok) {
+      console.log('Send OTP Response Status:', otpResponse.status);
+
+      if (!otpResponse.ok) {
+        const errorText = await otpResponse.text();
+        console.error('Send OTP failed:', errorText);
+        setError('Failed to send OTP. Please try again.');
+        setIsSendingCode(false);
+        return;
+      }
+
+      const otpData = await otpResponse.json();
+      console.log('Send OTP Response:', otpData);
+
+      if (otpData === true) {
+        console.log('✅ OTP sent successfully');
         setMessage(t.codeSent);
         setCodeSent(true);
         setTimeout(() => setMessage(''), 3000);
@@ -177,7 +205,7 @@ function Register() {
         setError('Failed to send OTP. Please try again.');
       }
     } catch (err) {
-      console.error('Send code error:', err);
+      console.error('❌ Error in registration flow:', err);
       setError(t.registrationError);
     } finally {
       setIsSendingCode(false);
@@ -190,7 +218,7 @@ function Register() {
     setMessage('');
     
     if (!verificationCode) {
-      setError(t.fillAllFields);
+      setError(t.enterCodeFirst);
       return;
     }
 
@@ -202,8 +230,12 @@ function Register() {
     setIsLoading(true);
 
     try {
+      console.log('Step 3: Verifying OTP...');
+      console.log('Key:', encryptedKey);
+      console.log('OTP:', verificationCode);
+
       // Step 3: Verify OTP
-      const response = await fetch(`${API_BASE_URL}/Auth/verify-otp?key=${encodeURIComponent(encryptedKey)}&otp=${encodeURIComponent(verificationCode)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/Auth/verify-otp?key=${encodeURIComponent(encryptedKey)}&otp=${encodeURIComponent(verificationCode)}`, {
         method: 'POST',
         headers: {
           'accept': '*/*',
@@ -211,72 +243,35 @@ function Register() {
       });
 
       console.log('Verify OTP Response Status:', response.status);
-      console.log('Verify OTP Response OK:', response.ok);
 
-      // Handle 404 specifically
-      if (response.status === 404) {
-        console.error('Endpoint not found. Check if the API path is correct.');
-        setError(t.endpointNotFound + ' (Endpoint: /Auth/verify-otp)');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Verify OTP failed:', errorText);
+        setError(t.verificationError);
         setIsLoading(false);
         return;
       }
 
-      const contentType = response.headers.get("content-type");
-      let data = null;
-      
-      if (contentType && contentType.includes("application/json")) {
-        try {
-          data = await response.json();
-          console.log('Verify OTP Response Data:', data);
-        } catch (jsonError) {
-          console.error('JSON parse error:', jsonError);
-          // If response status is 2xx but JSON parsing fails
-          if (response.ok) {
-            console.log('✅ Registration successful (no JSON response)');
-            setMessage(t.registrationSuccess);
-            setTimeout(() => {
-              navigate('/login');
-            }, 2000);
-            setIsLoading(false);
-            return;
-          }
-          // If response is not ok and JSON parsing fails
-          console.error('❌ Registration failed - Invalid response format');
-          setError(t.verificationError + ' (Invalid response format)');
-          setIsLoading(false);
-          return;
-        }
-      }
+      const data = await response.json();
+      console.log('Verify OTP Response:', data);
 
-      // Check if response is successful (status 200-299)
-      if (response.ok) {
-        // Store token if provided
-        if (data?.token) {
-          console.log('✅ Registration successful - Token received:', data.token);
-          // You can store this token in localStorage if needed
-          // localStorage.setItem('token', data.token);
-        } else {
-          console.log('✅ Registration successful - No token in response');
-        }
-        
-        setMessage(t.registrationSuccess);
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        // Response is not ok (status 400, 401, 500, etc.)
-        const errorMessage = data?.message || data?.error || `Error ${response.status}: ${response.statusText}`;
-        console.error('❌ Registration failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          errorMessage: errorMessage,
-          fullResponse: data
-        });
-        setError(t.verificationError + ` (${errorMessage})`);
+      // Store token if provided
+      if (data?.token) {
+        console.log('✅ Verification successful - Token received');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('tokenExpiration', data.expirationDate);
       }
+      
+      setMessage(t.registrationSuccess);
+      
+      // Redirect to login after 2 seconds
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+
     } catch (err) {
-      console.error('❌ Registration failed - Network or unexpected error:', err);
-      setError(t.verificationError + ' (Network error)');
+      console.error('❌ Verification error:', err);
+      setError(t.verificationError);
     } finally {
       setIsLoading(false);
     }
@@ -434,7 +429,7 @@ function Register() {
                   />
                 </div>
                 <p className="register-code-info">
-                  Code sent to {phone}
+                  Code sent to {phone} (Use 1111 for testing)
                 </p>
               </div>
 
