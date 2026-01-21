@@ -1,12 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Book from './Book';
 import Entry from './Entry';
 import History from './History';
 import '../styles/User.css';
 
+const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
+
 function User() {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('book-now');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/User/profile`, {
+        method: 'GET',
+        headers: {
+          'accept': '*/*',
+          'Authorization': token,
+          'X-Language': 'en'
+        }
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiration');
+        navigate('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch user profile: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setUserData(data);
+    } catch (err) {
+      console.error('Error fetching user profile:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -18,6 +65,13 @@ function User() {
     if (window.innerWidth <= 768) {
       setIsSidebarOpen(false);
     }
+  };
+
+  const getInitials = () => {
+    if (!userData) return '?';
+    const firstInitial = userData.name?.charAt(0).toUpperCase() || '';
+    const lastInitial = userData.lastName?.charAt(0).toUpperCase() || '';
+    return firstInitial + lastInitial;
   };
 
   return (
@@ -45,13 +99,29 @@ function User() {
       <div className={`user-sidebar-container ${isSidebarOpen ? 'open' : ''}`}>
         <div className="user-items">
           <div className="user-picture">
-            <img src="#" alt="User profile" />
+            {loading ? (
+              <div className="user-picture-loading">Loading...</div>
+            ) : (
+              <div className="user-picture-initials">
+                {getInitials()}
+              </div>
+            )}
           </div>
           <div className="user-name">
-            <p>Name Lastname</p>
+            <p>
+              {loading 
+                ? 'Loading...' 
+                : `${userData?.name || ''} ${userData?.lastName || ''}`
+              }
+            </p>
           </div>
           <div className="user-email">
-            <p>user@gmail.com</p>
+            <p>
+              {loading 
+                ? 'Loading...' 
+                : userData?.email || userData?.phoneNumber || 'No contact info'
+              }
+            </p>
           </div>
         </div>
         <div className="user-menu">
