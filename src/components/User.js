@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Book from './Book';
 import Entry from './Entry';
 import History from './History';
+import Settings from './Settings';
 import '../styles/User.css';
 
 const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
@@ -204,9 +205,8 @@ function User() {
           </div>
         )}
         {activeSection === 'settings' && (
-          <div className="settings-container active">
-            <h2>Settings</h2>
-            {/* Add your settings content here */}
+          <div className="settings-wrapper active">
+            <Settings />
           </div>
         )}
       </div>

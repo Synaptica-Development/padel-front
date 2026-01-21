@@ -249,6 +249,7 @@
   max-height: 100%;
   overflow-y: auto;
   padding-right: 0.3rem;
+  padding-top: 2px;
 }
 
 .times-grid::-webkit-scrollbar {
