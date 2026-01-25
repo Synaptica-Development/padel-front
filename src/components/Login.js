@@ -127,9 +127,9 @@ function Login() {
           console.log('✅ Token validated successfully');
           setSuccessMessage(t.loginSuccess);
           
-          // Redirect to user dashboard after a short delay
+          // Redirect to home page after a short delay
           setTimeout(() => {
-            navigate('/user');
+            navigate('/');
           }, 1500);
         } else {
           console.error('❌ Token validation failed');

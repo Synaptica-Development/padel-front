@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Book from './Book';
-import Entry from './Entry';
 import History from './History';
 import Settings from './Settings';
 import '../styles/User.css';
@@ -48,6 +47,7 @@ function User() {
       }
 
       const data = await response.json();
+      console.log('User profile data:', data);
       setUserData(data);
     } catch (err) {
       console.error('Error fetching user profile:', err);
@@ -66,6 +66,10 @@ function User() {
     if (window.innerWidth <= 768) {
       setIsSidebarOpen(false);
     }
+  };
+
+  const handleBackToHome = () => {
+    navigate('/');
   };
 
   const getInitials = () => {
@@ -102,10 +106,15 @@ function User() {
           <div className="user-picture">
             {loading ? (
               <div className="user-picture-loading">Loading...</div>
-            ) : (
-              <div className="user-picture-initials">
-                {getInitials()}
-              </div>
+            ) : userData?.profileImageUrl && (
+              <img 
+                src={userData.profileImageUrl} 
+                alt="Profile" 
+                className="user-picture-img"
+                onError={(e) => {
+                  console.error('Failed to load profile image:', userData.profileImageUrl);
+                }}
+              />
             )}
           </div>
           <div className="user-name">
@@ -139,16 +148,6 @@ function User() {
             </a>
             <a 
               href="#" 
-              className={activeSection === 'entry' ? 'active' : ''}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('entry');
-              }}
-            >
-              <p>Entry</p>
-            </a>
-            <a 
-              href="#" 
               className={activeSection === 'current-orders' ? 'active' : ''}
               onClick={(e) => {
                 e.preventDefault();
@@ -177,6 +176,16 @@ function User() {
             >
               <p>Settings</p>
             </a>
+            <a 
+              href="#" 
+              className="back-to-home"
+              onClick={(e) => {
+                e.preventDefault();
+                handleBackToHome();
+              }}
+            >
+              <p>Back to Homepage</p>
+            </a>
           </div>
         </div>
       </div>
@@ -186,11 +195,6 @@ function User() {
         {activeSection === 'book-now' && (
           <div className="tables active">
             <Book />
-          </div>
-        )}
-        {activeSection === 'entry' && (
-          <div className="entry-container active">
-            <Entry />
           </div>
         )}
         {activeSection === 'current-orders' && (

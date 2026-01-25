@@ -8,6 +8,7 @@ function Settings() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
@@ -22,7 +23,8 @@ function Settings() {
     name: '',
     lastName: '',
     email: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    profilePictureUrl: ''
   });
 
   const [originalData, setOriginalData] = useState({});
@@ -69,7 +71,8 @@ function Settings() {
         name: data.name || '',
         lastName: data.lastName || '',
         email: data.email || '',
-        phoneNumber: data.phoneNumber || ''
+        phoneNumber: data.phoneNumber || '',
+        profilePictureUrl: data.profileImageUrl || '' // Fixed: Changed from data.profilePictureUrl
       };
       
       setFormData(profileData);
@@ -81,6 +84,89 @@ function Settings() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleProfilePictureUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      setError('');
+      setSuccess('');
+
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
+
+      const response = await fetch(`${API_BASE_URL}/api/FileUpload/upload?ImageType=Profile`, {
+        method: 'PUT',
+        headers: {
+          'accept': '*/*',
+          'Authorization': token,
+          'X-Language': 'en'
+        },
+        body: uploadFormData
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiration');
+        navigate('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to upload profile picture');
+      }
+
+      const result = await response.json();
+      console.log('Profile picture uploaded:', result);
+      console.log('Image URL:', result.imageLink);
+
+      // Update form data with new profile picture URL
+      setFormData(prev => {
+        const updated = {
+          ...prev,
+          profilePictureUrl: result.imageLink
+        };
+        console.log('Updated formData:', updated);
+        return updated;
+      });
+
+      setSuccess('Profile picture uploaded! Click "Save Changes" to confirm.');
+
+    } catch (err) {
+      console.error('Error uploading profile picture:', err);
+      setError('Failed to upload profile picture. Please try again.');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setFormData(prev => ({
+      ...prev,
+      profilePictureUrl: ''
+    }));
+    setSuccess('Profile picture removed! Click "Save Changes" to confirm.');
   };
 
   const handleChange = (e) => {
@@ -129,6 +215,11 @@ function Settings() {
       // Only add email if it's not empty
       if (formData.email && formData.email.trim()) {
         params.append('email', formData.email.trim());
+      }
+
+      // Add profile picture URL if changed
+      if (formData.profilePictureUrl !== originalData.profilePictureUrl) {
+        params.append('profilePictureUrl', formData.profilePictureUrl || '');
       }
 
       console.log('Sending update with params:', params.toString());
@@ -247,7 +338,7 @@ function Settings() {
       const verified = await response.json();
       
       if (verified) {
-        setSuccess('Email verified and updated successfully!');
+        setSuccess('Profile updated and verified successfully!');
         setShowOtpModal(false);
         setOtp('');
         setVerificationKey('');
@@ -296,6 +387,12 @@ function Settings() {
     return JSON.stringify(formData) !== JSON.stringify(originalData);
   };
 
+  const getInitials = () => {
+    const firstInitial = formData.name?.charAt(0).toUpperCase() || '';
+    const lastInitial = formData.lastName?.charAt(0).toUpperCase() || '';
+    return firstInitial + lastInitial || '?';
+  };
+
   if (loading) {
     return (
       <div className="settings-container">
@@ -342,6 +439,68 @@ function Settings() {
       )}
 
       <form className="settings-form" onSubmit={handleSubmit}>
+        {/* Profile Picture Section */}
+        <div className="settings-section">
+          <h3 className="section-title">Profile Picture</h3>
+          
+          <div className="profile-picture-section">
+            <div className="profile-picture-preview">
+              {formData.profilePictureUrl ? (
+                <img 
+                  src={formData.profilePictureUrl} 
+                  alt="Profile" 
+                  className="profile-picture-img"
+                  onLoad={() => console.log('Image loaded successfully:', formData.profilePictureUrl)}
+                  onError={(e) => {
+                    console.error('Image failed to load:', formData.profilePictureUrl);
+                    console.error('Error event:', e);
+                  }}
+                />
+              ) : (
+                <div className="profile-picture-placeholder">
+                  {getInitials()}
+                </div>
+              )}
+              {uploadingPhoto && (
+                <div className="profile-picture-overlay">
+                  <div className="loading-spinner"></div>
+                </div>
+              )}
+            </div>
+
+            <div className="profile-picture-actions">
+              <label className="btn-upload-photo">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfilePictureUpload}
+                  disabled={uploadingPhoto}
+                  style={{ display: 'none' }}
+                />
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                {uploadingPhoto ? 'Uploading...' : 'Upload Photo'}
+              </label>
+
+              {formData.profilePictureUrl && (
+                <button
+                  type="button"
+                  className="btn-remove-photo"
+                  onClick={handleRemoveProfilePicture}
+                  disabled={uploadingPhoto}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Remove
+                </button>
+              )}
+            </div>
+            <p className="form-help-text">Recommended: Square image, at least 200x200px, max 5MB</p>
+          </div>
+        </div>
+
         <div className="settings-section">
           <h3 className="section-title">Personal Information</h3>
           
@@ -507,7 +666,7 @@ function Settings() {
                     Verifying...
                   </>
                 ) : (
-                  'Verify Email'
+                  'Verify Changes'
                 )}
               </button>
 

@@ -3,12 +3,99 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
 import '../styles/Header.css';
 
+const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
+
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const scrollAttempts = useRef(0);
+
+  // Check if user is logged in and fetch profile
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        // Extract token without "Bearer " prefix for validation
+        const tokenValue = token.replace('Bearer ', '');
+        const isValid = await validateToken(tokenValue);
+        
+        if (isValid) {
+          setIsLoggedIn(true);
+          // Fetch user profile
+          await fetchUserProfile(token);
+        } else {
+          // Token invalid, clear it
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('tokenExpiration');
+          setIsLoggedIn(false);
+          setUserProfile(null);
+        }
+      } else {
+        setIsLoggedIn(false);
+        setUserProfile(null);
+      }
+    };
+
+    checkAuth();
+  }, [location.pathname]); // Re-check on route change
+
+  // Fetch user profile
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/User/profile`, {
+        method: 'GET',
+        headers: {
+          'accept': '*/*',
+          'Authorization': token,
+          'X-Language': language
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('User profile fetched in header:', data);
+        setUserProfile(data);
+      } else {
+        console.error('Failed to fetch user profile');
+      }
+    } catch (err) {
+      console.error('Error fetching user profile:', err);
+    }
+  };
+
+  // Validate token function
+  const validateToken = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/Auth/validate-token?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+        headers: {
+          'accept': '*/*',
+          'X-Language': language
+        }
+      });
+
+      if (response.ok) {
+        const isValid = await response.json();
+        return isValid === true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Token validation error:', err);
+      return false;
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('tokenExpiration');
+    setIsLoggedIn(false);
+    setUserProfile(null);
+    navigate('/');
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,7 +115,7 @@ function Header() {
   // Handle scrolling after navigation
   useEffect(() => {
     scrollAttempts.current = 0;
-    
+
     if (location.hash) {
       const scrollToHash = () => {
         const id = location.hash.replace('#', '');
@@ -71,7 +158,7 @@ function Header() {
   const handleScrollToSection = (e, sectionId) => {
     e.preventDefault();
     closeMenu();
-    
+
     // Check if we're on the home page
     if (location.pathname === '/') {
       // We're already on home page, just scroll
@@ -115,6 +202,7 @@ function Header() {
               </svg>
             </button>
           </div>
+
           <ul className="nav-list">
             <li className="nav-item">
               <a 
@@ -144,6 +232,7 @@ function Header() {
               </a>
             </li>
           </ul>
+
           <div className="mobile-nav-footer">
             <button 
               className="language-toggle-mobile"
@@ -166,9 +255,39 @@ function Header() {
             {language === 'en' ? 'GE' : 'EN'}
           </button>
 
-          <Link to="/book" className="book-now-btn">
-            {t('bookNow')}
-          </Link>
+          {isLoggedIn ? (
+            <div className="user-profile-dropdown">
+              <button className="profile-button" title="Profile">
+                <div className="profile-avatar">
+                  {userProfile?.profileImageUrl ? (
+                    <img 
+                      src={userProfile.profileImageUrl} 
+                      alt="Profile" 
+                      className="profile-avatar-img"
+                      onError={(e) => {
+                        console.error('Failed to load profile image in header:', userProfile.profileImageUrl);
+                      }}
+                    />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  )}
+                </div>
+              </button>
+              <Link to="/user" className="book-now-btn">
+                Book Now
+              </Link>
+              <button className="logout-button" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="book-now-btn">
+              Login
+            </Link>
+          )}
         </div>
 
         <button 
