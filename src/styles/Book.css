@@ -1,5 +1,340 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Noto+Sans+Georgian:wght@100..900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/diaspora');
 
+
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans Regular.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans ExBold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA CONDENSED FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Condensed';
+  src: url('../fonts/Canela Condensed Family/CanelaCondensed-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ========================================
+   CANELA DECK FONT FAMILY
+   ======================================== */
+
+/* Thin */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('../fonts/Canela Deck Family/CanelaDeck-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
 /* ========================
    BOOK CONTAINER
    ======================== */

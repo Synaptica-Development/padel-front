@@ -56,7 +56,16 @@ function Footer() {
   }
 
   const handleBookNow = () => {
-    navigate('/login')
+    // Check if user is logged in
+    const token = localStorage.getItem('authToken')
+    
+    if (token) {
+      // User is logged in, go to book page
+      navigate('/book')
+    } else {
+      // User is not logged in, go to login page
+      navigate('/login')
+    }
   }
 
   return (

@@ -257,7 +257,7 @@ function Header() {
 
           {isLoggedIn ? (
             <div className="user-profile-dropdown">
-              <button className="profile-button" title="Profile">
+              <Link to="/user" className="profile-button" title="Profile">
                 <div className="profile-avatar">
                   {userProfile?.profileImageUrl ? (
                     <img 
@@ -275,8 +275,8 @@ function Header() {
                     </svg>
                   )}
                 </div>
-              </button>
-              <Link to="/user" className="book-now-btn">
+              </Link>
+              <Link to="/book" className="book-now-btn">
                 Book Now
               </Link>
               <button className="logout-button" onClick={handleLogout}>

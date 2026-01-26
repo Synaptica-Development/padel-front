@@ -1,8 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
 import '../styles/About.css';
-import { Link } from 'react-router-dom';
-
 
 const pic = process.env.PUBLIC_URL + '/grid1.png';
 const pic2 = process.env.PUBLIC_URL + '/grid2.png';
@@ -11,6 +10,22 @@ const pic4 = process.env.PUBLIC_URL + '/grid5.png';
 
 function About() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  const handleBookNow = (e) => {
+    e.preventDefault();
+    
+    // Check if user is logged in
+    const token = localStorage.getItem('authToken');
+    
+    if (token) {
+      // User is logged in, go to book page
+      navigate('/book');
+    } else {
+      // User is not logged in, go to login page
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="about-grid-wrapper" id="about">
@@ -23,9 +38,9 @@ function About() {
         <div className="about-left-overlay"></div>
         <div className="about-left-content">
           <h2 className="about-title-large">{t('aboutUsTitle')}</h2>
-         <Link to="/login" className="about-book-btn" style={{textDecoration: 'none'}}>
-  Book Now
-</Link>
+          <button onClick={handleBookNow} className="about-book-btn">
+            Book Now
+          </button>
         </div>
       </div>
 
@@ -34,10 +49,7 @@ function About() {
         {/* TOP ROW (50% Height) */}
         <div className="about-row">
           {/* CUBE 2: Top Left (30% Width) */}
-          <div 
-            className="about-cube width-30 dark-theme"
-           
-          >
+          <div className="about-cube width-30 dark-theme">
             <div className="cube-content">
               <p>{t('aboutParagraph1')}</p>
             </div>
@@ -62,12 +74,14 @@ function About() {
         {/* BOTTOM ROW (50% Height) */}
         <div className="about-row">
           {/* CUBE 4: Bottom Left (70% Width) */}
-          <div className="about-cube width-70 light-theme"
-           style={{
+          <div 
+            className="about-cube width-70 light-theme"
+            style={{
               backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${pic4})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
-            }}>
+            }}
+          >
             <div className="cube-content">
               <h3>Our Vision</h3>
               <p>{t('aboutParagraph3')}</p>

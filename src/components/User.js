@@ -9,13 +9,27 @@ const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
 
 function User() {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('book-now');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('current-orders');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUserProfile();
+  }, []);
+
+  // Handle window resize to auto-open sidebar on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchUserProfile = async () => {
@@ -138,16 +152,6 @@ function User() {
           <div className="user-buttons">
             <a 
               href="#" 
-              className={activeSection === 'book-now' ? 'active' : ''}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('book-now');
-              }}
-            >
-              <p>Book Now</p>
-            </a>
-            <a 
-              href="#" 
               className={activeSection === 'current-orders' ? 'active' : ''}
               onClick={(e) => {
                 e.preventDefault();
@@ -192,11 +196,6 @@ function User() {
 
       {/* Main Content */}
       <div className={`user-booking-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-        {activeSection === 'book-now' && (
-          <div className="tables active">
-            <Book />
-          </div>
-        )}
         {activeSection === 'current-orders' && (
           <div className="current-orders-container active">
             <h2>Current Orders</h2>
