@@ -72,7 +72,7 @@ function Settings() {
         lastName: data.lastName || '',
         email: data.email || '',
         phoneNumber: data.phoneNumber || '',
-        profilePictureUrl: data.profileImageUrl || '' // Fixed: Changed from data.profilePictureUrl
+        profilePictureUrl: data.profileImageUrl || ''
       };
       
       setFormData(profileData);
@@ -407,14 +407,9 @@ function Settings() {
   return (
     <div className="settings-container">
       <div className="settings-header">
-        <div className="settings-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+      
         <div className="settings-title-section">
-          <h2 className="settings-title">Account Settings</h2>
+          <h2 className="settings-title">Profile Information</h2>
           <p className="settings-subtitle">Manage your profile information</p>
         </div>
       </div>
@@ -439,65 +434,71 @@ function Settings() {
       )}
 
       <form className="settings-form" onSubmit={handleSubmit}>
-        {/* Profile Picture Section */}
+        {/* Profile Picture Section - Facebook Style */}
         <div className="settings-section">
           <h3 className="section-title">Profile Picture</h3>
           
-          <div className="profile-picture-section">
-            <div className="profile-picture-preview">
-              {formData.profilePictureUrl ? (
-                <img 
-                  src={formData.profilePictureUrl} 
-                  alt="Profile" 
-                  className="profile-picture-img"
-                  onLoad={() => console.log('Image loaded successfully:', formData.profilePictureUrl)}
-                  onError={(e) => {
-                    console.error('Image failed to load:', formData.profilePictureUrl);
-                    console.error('Error event:', e);
-                  }}
-                />
-              ) : (
-                <div className="profile-picture-placeholder">
-                  {getInitials()}
+          <div className="fb-profile-picture-wrapper">
+            <label className="fb-profile-picture-container" htmlFor="profile-upload">
+              <input
+                id="profile-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureUpload}
+                disabled={uploadingPhoto}
+                style={{ display: 'none' }}
+              />
+              
+              <div className="fb-profile-picture">
+                {formData.profilePictureUrl ? (
+                  <img 
+                    src={formData.profilePictureUrl} 
+                    alt="Profile" 
+                    className="fb-profile-img"
+                  />
+                ) : (
+                  <div className="fb-profile-placeholder">
+                    {getInitials()}
+                  </div>
+                )}
+                
+                {/* Edit Overlay */}
+                <div className="fb-profile-edit-overlay">
+                  {uploadingPhoto ? (
+                    <>
+                      <div className="loading-spinner-small"></div>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                      <span>Edit</span>
+                    </>
+                  )}
                 </div>
-              )}
-              {uploadingPhoto && (
-                <div className="profile-picture-overlay">
-                  <div className="loading-spinner"></div>
-                </div>
-              )}
-            </div>
-
-            <div className="profile-picture-actions">
-              <label className="btn-upload-photo">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePictureUpload}
-                  disabled={uploadingPhoto}
-                  style={{ display: 'none' }}
-                />
+              </div>
+            </label>
+            
+            {formData.profilePictureUrl && (
+              <button
+                type="button"
+                className="fb-remove-photo-btn"
+                onClick={handleRemoveProfilePicture}
+                disabled={uploadingPhoto}
+              >
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                {uploadingPhoto ? 'Uploading...' : 'Upload Photo'}
-              </label>
-
-              {formData.profilePictureUrl && (
-                <button
-                  type="button"
-                  className="btn-remove-photo"
-                  onClick={handleRemoveProfilePicture}
-                  disabled={uploadingPhoto}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Remove
-                </button>
-              )}
-            </div>
-            <p className="form-help-text">Recommended: Square image, at least 200x200px, max 5MB</p>
+                Remove Photo
+              </button>
+            )}
+            
+            <p className="fb-profile-help-text">
+              Click on photo to upload • Square image recommended • Max 5MB
+            </p>
           </div>
         </div>
 

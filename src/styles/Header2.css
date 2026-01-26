@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Noto+Sans+Georgian:wght@100..900&display=swap');
+
+/* === FONT FACES === */
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans Regular.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JUST Sans';
+  src: url('../fonts/JUST Sans ExBold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('../fonts/Canela Family/Canela-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================
+   HEADER2 - USER PROFILE HEADER
+   ======================== */
+.header2 {
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.header2-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  position: relative;
+}
+
+/* === LOGO === */
+.header2-logo {
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.header2-logo-link {
+  text-decoration: none;
+  display: block;
+}
+
+.header2-logo-text {
+  font-family: 'Canela', serif;
+  font-weight: 500;
+  font-size: 28px;
+  color: #95392F;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.header2-logo-link:hover .header2-logo-text {
+  opacity: 0.8;
+}
+
+/* === NAVIGATION - ABSOLUTELY CENTERED === */
+.header2-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header2-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header2-nav-item {
+  margin: 0;
+}
+
+.header2-nav-link {
+  font-family: 'JUST Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #95392F;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.header2-nav-link:hover {
+  color: #7a2f26;
+  opacity: 0.8;
+}
+
+.header2-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #95392F;
+  transition: width 0.3s ease;
+}
+
+.header2-nav-link:hover::after {
+  width: 100%;
+}
+
+/* === ACTIONS === */
+.header2-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 2;
+}
+
+/* Language Toggle */
+.header2-language-toggle {
+  font-family: 'JUST Sans', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: #95392F;
+  background-color: transparent;
+  border: 2px solid #95392F;
+  border-radius: 25px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.header2-language-toggle:hover {
+  background-color: #95392F;
+  color: #ffffff;
+}
+
+/* Book Now Button */
+.header2-book-btn {
+  font-family: 'JUST Sans', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: #ffffff;
+  background-color: #95392F;
+  text-decoration: none;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.header2-book-btn:hover {
+  background-color: #7a2f26;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.3);
+}
+
+/* Profile Button */
+.header2-profile {
+  display: flex;
+  align-items: center;
+}
+
+.header2-profile-button {
+  background: linear-gradient(135deg, #95392F 0%, #a44f46 100%);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(149, 57, 47, 0.3);
+}
+
+.header2-profile-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.5);
+}
+
+.header2-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.header2-profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header2-profile-avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Logout Button */
+.header2-logout-btn {
+  background: transparent;
+  font-family: 'JUST Sans', sans-serif;
+  border: 2px solid #95392F;
+  color: #95392F;
+  padding: 8px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.header2-logout-btn:hover {
+  background: #95392F;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.3);
+}
+
+/* ========================
+   MOBILE RESPONSIVENESS
+   ======================== */
+@media (max-width: 768px) {
+  .header2 {
+    display: none;
+  }
+
+  .header2-container {
+    padding: 0 1rem;
+    height: 70px;
+  }
+
+  .header2-logo-text {
+    font-size: 22px;
+  }
+
+  /* Hide navigation and actions on mobile */
+  .header2-nav,
+  .header2-actions {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header2-container {
+    padding: 0 0.8rem;
+    height: 65px;
+  }
+
+  .header2-logo-text {
+    font-size: 20px;
+  }
+}

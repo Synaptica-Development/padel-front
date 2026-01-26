@@ -924,3 +924,182 @@
     width: 100%;
   }
 }
+
+
+
+
+
+/* ========================
+   FACEBOOK-STYLE PROFILE PICTURE
+   ======================== */
+.fb-profile-picture-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.fb-profile-picture-container {
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+.fb-profile-picture {
+  width: 180px;
+  height: 180px;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.fb-profile-picture-container:hover .fb-profile-picture {
+  transform: scale(1.02);
+}
+
+.fb-profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fb-profile-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #95392f 0%, #b44838 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Edit Overlay */
+.fb-profile-edit-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+  gap: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fb-profile-picture-container:hover .fb-profile-edit-overlay {
+  opacity: 1;
+}
+
+.fb-profile-edit-overlay svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.fb-profile-edit-overlay span {
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.loading-spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Remove Photo Button */
+.fb-remove-photo-btn {
+  padding: 0.7rem 1.5rem;
+  background: transparent;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fb-remove-photo-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.fb-remove-photo-btn:hover:not(:disabled) {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.fb-remove-photo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fb-profile-help-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #999;
+  text-align: center;
+  max-width: 400px;
+  margin: 0;
+}
+
+/* Mobile - Show overlay by default */
+@media (max-width: 768px) {
+  .fb-profile-picture {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .fb-profile-placeholder {
+    font-size: 40px;
+  }
+  
+  .fb-profile-edit-overlay {
+    opacity: 1;
+    height: 40%;
+  }
+  
+  .fb-profile-edit-overlay svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .fb-profile-edit-overlay span {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fb-profile-picture {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .fb-profile-placeholder {
+    font-size: 36px;
+  }
+}
