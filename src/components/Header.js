@@ -175,6 +175,18 @@ function Header() {
     navigate('/user');
   };
 
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    closeMenu();
+    navigate('/login');
+  };
+
+  const handleBookNowClick = (e) => {
+    e.preventDefault();
+    closeMenu();
+    navigate('/book');
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -229,20 +241,22 @@ function Header() {
                 {t('contact')}
               </a>
             </li>
-            {/* Profile link for mobile only */}
-            <li className="nav-item mobile-profile-item">
-              <a 
-                href="#" 
-                className="nav-link profile-nav-link" 
-                onClick={handleProfileClick}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Profile
-              </a>
-            </li>
+            {/* Profile link for mobile only - only show if logged in */}
+            {isLoggedIn && (
+              <li className="nav-item mobile-profile-item">
+                <a 
+                  href="#" 
+                  className="nav-link profile-nav-link" 
+                  onClick={handleProfileClick}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Profile
+                </a>
+              </li>
+            )}
           </ul>
 
           <div className="mobile-nav-footer">
@@ -253,6 +267,23 @@ function Header() {
             >
               {language === 'en' ? 'ქართული (GE)' : 'English (EN)'}
             </button>
+            
+            {/* Login/Book Now button for mobile sidebar */}
+            {isLoggedIn ? (
+              <button 
+                className="mobile-book-now-btn"
+                onClick={handleBookNowClick}
+              >
+                Book Now
+              </button>
+            ) : (
+              <button 
+                className="mobile-login-btn"
+                onClick={handleLoginClick}
+              >
+                Login
+              </button>
+            )}
           </div>
         </nav>
 

@@ -1038,3 +1038,33 @@
     display: flex !important;
   }
 }
+
+
+@media (max-width: 768px) {
+  .header-actions {
+    display: none;
+  }
+}
+
+
+.mobile-book-now-btn,
+.mobile-login-btn {
+      font-family: 'JUST Sans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #95392F;
+    border: 2px solid #95392F;
+    border-radius: 25px;
+    padding: 12px 24px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(149, 57, 47, 0.1);
+    margin-top: 10px;
+}
+
+.mobile-book-now-btn:hover,
+.mobile-login-btn:hover {
+  background-color: #7a2e26;
+}
