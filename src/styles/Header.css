@@ -993,3 +993,48 @@
     font-size: 13px;
   }
 }
+
+
+/* Profile in mobile sidebar */
+.mobile-profile-item {
+  display: none;
+}
+
+.profile-nav-link {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-nav-link svg {
+  flex-shrink: 0;
+}
+
+/* Show profile in sidebar only on mobile when logged in */
+@media (max-width: 991px) {
+  .mobile-profile-item {
+    display: block;
+
+  }
+
+  /* Hide desktop profile dropdown on mobile */
+  .user-profile-dropdown {
+    display: none !important;
+  }
+
+  /* Show only book now button for logged in users on mobile */
+  .header-actions .book-now-btn {
+    display: inline-block;
+  }
+}
+
+/* Keep desktop profile visible on desktop */
+@media (min-width: 992px) {
+  .mobile-profile-item {
+    display: none !important;
+  }
+
+  .user-profile-dropdown {
+    display: flex !important;
+  }
+}

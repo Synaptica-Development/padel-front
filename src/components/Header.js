@@ -89,14 +89,6 @@ function Header() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('tokenExpiration');
-    setIsLoggedIn(false);
-    setUserProfile(null);
-    navigate('/');
-  };
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     // Prevent body scroll when menu is open
@@ -177,6 +169,12 @@ function Header() {
     }
   };
 
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    closeMenu();
+    navigate('/user');
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -231,6 +229,20 @@ function Header() {
                 {t('contact')}
               </a>
             </li>
+            {/* Profile link for mobile only */}
+            <li className="nav-item mobile-profile-item">
+              <a 
+                href="#" 
+                className="nav-link profile-nav-link" 
+                onClick={handleProfileClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Profile
+              </a>
+            </li>
           </ul>
 
           <div className="mobile-nav-footer">
@@ -279,9 +291,6 @@ function Header() {
               <Link to="/book" className="book-now-btn">
                 Book Now
               </Link>
-              <button className="logout-button" onClick={handleLogout}>
-                Logout
-              </button>
             </div>
           ) : (
             <Link to="/login" className="book-now-btn">

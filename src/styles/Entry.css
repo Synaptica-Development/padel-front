@@ -439,3 +439,73 @@
     font-size: 0.75rem;
   }
 }
+
+
+
+
+
+/* ========================
+   BACK BUTTON
+   ======================== */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: white;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.back-button:hover {
+  background: #95392f;
+  color: white;
+  border-color: #95392f;
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.2);
+}
+
+.back-button:active {
+  transform: translateX(-2px);
+  box-shadow: 0 2px 6px rgba(149, 57, 47, 0.2);
+}
+
+.back-button svg {
+  transition: transform 0.3s ease;
+}
+
+.back-button:hover svg {
+  transform: translateX(-2px);
+}
+
+/* Mobile Responsive for Back Button */
+@media (max-width: 768px) {
+  .back-button {
+    padding: 0.65rem 1.1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .back-button {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}

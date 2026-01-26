@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Book from './Book';
+import { useNavigate, useParams } from 'react-router-dom';
 import History from './History';
+import Entry from './Entry';
 import Settings from './Settings';
 import '../styles/User.css';
 
 const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
 
-function User() {
+function User({ section }) {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('current-orders');
+  const params = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Determine active section from props
+  const activeSection = section || 'order-history';
 
   useEffect(() => {
     fetchUserProfile();
@@ -75,7 +78,11 @@ function User() {
   };
 
   const handleNavClick = (section) => {
-    setActiveSection(section);
+    if (section === 'order-history') {
+      navigate('/user/history');
+    } else if (section === 'settings') {
+      navigate('/user/settings');
+    }
     // Close sidebar on mobile after selection
     if (window.innerWidth <= 768) {
       setIsSidebarOpen(false);
@@ -83,6 +90,12 @@ function User() {
   };
 
   const handleBackToHome = () => {
+    navigate('/');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('tokenExpiration');
     navigate('/');
   };
 
@@ -152,16 +165,6 @@ function User() {
           <div className="user-buttons">
             <a 
               href="#" 
-              className={activeSection === 'current-orders' ? 'active' : ''}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('current-orders');
-              }}
-            >
-              <p>Current Orders</p>
-            </a>
-            <a 
-              href="#" 
               className={activeSection === 'order-history' ? 'active' : ''}
               onClick={(e) => {
                 e.preventDefault();
@@ -190,21 +193,30 @@ function User() {
             >
               <p>Back to Homepage</p>
             </a>
+            <a 
+              href="#" 
+              className="logout-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogout();
+              }}
+            >
+              <p>Logout</p>
+            </a>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className={`user-booking-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-        {activeSection === 'current-orders' && (
-          <div className="current-orders-container active">
-            <h2>Current Orders</h2>
-            {/* Add your current orders content here */}
-          </div>
-        )}
         {activeSection === 'order-history' && (
           <div className="order-history-container active">
             <History />
+          </div>
+        )}
+        {activeSection === 'entry' && (
+          <div className="order-history-container active">
+            <Entry />
           </div>
         )}
         {activeSection === 'settings' && (

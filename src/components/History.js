@@ -72,6 +72,9 @@ function History() {
     }
   };
 
+  const handleBookingClick = (bookingId) => {
+  navigate(`/user/entry/${bookingId}`);
+};
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -179,7 +182,11 @@ function History() {
 
       <div className="bookings-grid">
         {bookings.map((booking) => (
-          <div key={booking.id} className="booking-card">
+          <div 
+            key={booking.id} 
+            className="booking-card"
+            onClick={() => handleBookingClick(booking.id)}
+          >
             <div className="booking-card-header">
               <div className="booking-court-icon">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
