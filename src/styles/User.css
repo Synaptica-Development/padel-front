@@ -254,6 +254,7 @@
   .user-sidebar-container {
     width: 280px;
     padding: 1.5rem;
+    padding-top: 80px;
   }
 
   .user-booking-container {
@@ -434,3 +435,164 @@
 
 
 
+
+
+
+
+/* ========================
+   LOGOUT CONFIRMATION MODAL
+   ======================== */
+.logout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.logout-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(149, 57, 47, 0.3);
+  animation: popupSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align: center;
+}
+
+.logout-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #95392f 0%, #b44838 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 20px rgba(149, 57, 47, 0.3);
+}
+
+.logout-icon svg {
+  color: white;
+}
+
+.logout-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.logout-message {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.logout-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.logout-cancel-btn,
+.logout-confirm-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.logout-cancel-btn {
+  background: white;
+  border: 2px solid #e8e8e8;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.logout-cancel-btn:hover {
+  background: #f8f8f8;
+  border-color: #95392f;
+  color: #95392f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.15);
+}
+
+.logout-confirm-btn {
+  background: linear-gradient(135deg, #95392f 0%, #b44838 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(149, 57, 47, 0.3);
+}
+
+.logout-confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(149, 57, 47, 0.4);
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .logout-modal {
+    padding: 2rem;
+    max-width: 350px;
+  }
+
+  .logout-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logout-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logout-title {
+    font-size: 1.4rem;
+  }
+
+  .logout-message {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .logout-actions {
+    flex-direction: column;
+  }
+
+  .logout-cancel-btn,
+  .logout-confirm-btn {
+    width: 100%;
+  }
+}

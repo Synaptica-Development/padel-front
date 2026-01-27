@@ -18,14 +18,76 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
   const [error, setError] = useState('');
   const [showCancelPopup, setShowCancelPopup] = useState(false);
 
-  // Generate default time slots when date is selected
   useEffect(() => {
     if (selectedDate) {
-      setTimeSlots(generateDefaultTimeSlots());
+      fetchAvailableTimeSlots();
       setSelectedStartTime(null);
       setSelectedEndTime(null);
     }
   }, [selectedDate]);
+
+  const fetchAvailableTimeSlots = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      // Format date as YYYY-MM-DD
+      const dateStr = selectedDate.date.toISOString().split('T')[0];
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/Courts/available-hours?courtID=${selectedCourt.id}&date=${dateStr}`,
+        {
+          method: 'GET',
+          headers: {
+            'accept': '*/*',
+            'Authorization': token,
+            'X-Language': language
+          }
+        }
+      );
+
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiration');
+        navigate('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch available hours: ${response.status}`);
+      }
+
+      const availableHours = await response.json();
+      console.log('Available hours:', availableHours);
+
+      // Generate slots and mark unavailable ones
+      const allSlots = generateDefaultTimeSlots();
+      const slotsWithAvailability = allSlots.map(slot => {
+        // Check if this hour is in the available hours array
+        const isAvailable = availableHours.includes(slot.id);
+        return {
+          ...slot,
+          available: isAvailable
+        };
+      });
+
+      setTimeSlots(slotsWithAvailability);
+
+    } catch (err) {
+      console.error('Error fetching available hours:', err);
+      setError('Failed to load available time slots.');
+      // Fallback to default slots if API fails
+      setTimeSlots(generateDefaultTimeSlots());
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateDefaultTimeSlots = () => {
     const slots = [];
@@ -72,33 +134,54 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
     if (!slot.available) return;
 
     if (!selectedStartTime) {
+      // First click - select start time and automatically set end time to +1 hour
       setSelectedStartTime(slot);
-      setSelectedEndTime(null);
+      const endSlot = timeSlots.find(s => s.id === slot.id + 1);
+      setSelectedEndTime(endSlot || null);
       return;
     }
 
     if (!selectedEndTime) {
-      if (slot.id === selectedStartTime.id) {
-        const endSlot = timeSlots.find(s => s.id === slot.id + 1);
-        setSelectedEndTime(endSlot);
-      } 
-      else if (slot.id > selectedStartTime.id) {
-        setSelectedEndTime(slot);
-      }
-      else {
-        setSelectedStartTime(slot);
-        setSelectedEndTime(null);
+      // This shouldn't happen since we auto-set end time, but just in case
+      const endSlot = timeSlots.find(s => s.id === slot.id + 1);
+      setSelectedEndTime(endSlot);
+      return;
+    }
+
+    // If clicking the current end time, extend by 1 hour
+    if (slot.id === selectedEndTime.id) {
+      const newEndSlot = timeSlots.find(s => s.id === slot.id + 1);
+      if (newEndSlot) {
+        setSelectedEndTime(newEndSlot);
       }
       return;
     }
 
+    // If clicking the same start time, reset to 1 hour
+    if (slot.id === selectedStartTime.id) {
+      const endSlot = timeSlots.find(s => s.id === slot.id + 1);
+      setSelectedEndTime(endSlot);
+      return;
+    }
+
+    // If clicking a time after the start time, set it as the new end time
+    if (slot.id > selectedStartTime.id) {
+      setSelectedEndTime(slot);
+      return;
+    }
+
+    // If clicking a time before the start time, set it as the new start time
+    // and set end time to +1 hour from the new start
     setSelectedStartTime(slot);
-    setSelectedEndTime(null);
+    const endSlot = timeSlots.find(s => s.id === slot.id + 1);
+    setSelectedEndTime(endSlot);
   };
 
   const isSlotInRange = (slot) => {
     if (!selectedStartTime) return false;
-    if (!selectedEndTime) return slot.id === selectedStartTime.id;
+    if (!selectedEndTime) return false;
+    // A slot is in range if it's >= start and < end
+    // This means if start is 1:00 and end is 2:00, only 1:00 is in range (books the 1:00-2:00 hour)
     return slot.id >= selectedStartTime.id && slot.id < selectedEndTime.id;
   };
 
@@ -185,8 +268,6 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
   const handleCancelBooking = () => {
     console.log('Booking cancelled');
     setShowCancelPopup(false);
-    
-    // Reset selections
     setSelectedDate(null);
     setSelectedStartTime(null);
     setSelectedEndTime(null);
@@ -226,45 +307,28 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
       <div className="date-header">
         <button className="back-btn" onClick={onBack}>
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M19 12H5M5 12l7 7M5 12l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Back
         </button>
-        <div className="date-title-section">
-          <h2 className="date-title">Select Date & Time</h2>
-          <p className="date-subtitle">{selectedCourt.name} - Choose your booking slot</p>
-        </div>
         
-        {/* Cancel Booking Button */}
-        {selectedDate && selectedStartTime && selectedEndTime && (
-          <button 
-            className="back-btn" 
-            onClick={() => setShowCancelPopup(true)}
-            style={{ background: '#fee', borderColor: '#fdd', color: '#c33' }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Cancel
-          </button>
-        )}
+        <div className="header-content">
+          <h1 className="date-title">Book Your Slot</h1>
+          <p className="date-subtitle">{selectedCourt.name}</p>
+        </div>
       </div>
 
       {error && (
-        <div style={{ 
-          padding: '12px', 
-          marginBottom: '20px', 
-          backgroundColor: '#fee', 
-          color: '#c33', 
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
+        <div className="error-banner">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
           {error}
         </div>
       )}
 
-      <div className="selection-grid">
-        <div className="selection-section">
+      <div className="booking-layout">
+        {/* Calendar Section */}
+        <div className="calendar-section">
           <div className="calendar-header">
             <button 
               className="month-nav-btn" 
@@ -272,29 +336,32 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
               disabled={currentMonth <= new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
             >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <h3 className="month-title">
+            
+            <h2 className="month-title">
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-            </h3>
+            </h2>
+            
             <button 
               className="month-nav-btn" 
               onClick={handleNextMonth}
               disabled={currentMonth.getFullYear() >= 2026 && currentMonth.getMonth() >= 11}
             >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>
 
-          <div className="calendar-wrapper">
-            <div className="calendar-day-headers">
-              {dayNames.map(day => (
-                <div key={day} className="day-name">{day}</div>
+          <div className="calendar-grid">
+            <div className="calendar-weekdays">
+              {dayNames.map((day, index) => (
+                <div key={`weekday-${index}`} className="weekday-label">{day.charAt(0)}</div>
               ))}
             </div>
+            
             <div className="calendar-days">
               {calendarDays.map((dayObj, index) => {
                 const isSelected = selectedDate && 
@@ -303,18 +370,14 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
                 return (
                   <button
                     key={index}
-                    className={`day-cell ${isSelected ? 'selected' : ''} ${dayObj.isPast ? 'past' : ''}`}
+                    className={`day-button ${isSelected ? 'selected' : ''} ${dayObj.isPast ? 'past' : ''}`}
                     style={{ gridColumn: dayObj.gridColumn }}
                     onClick={() => handleDateSelect(dayObj)}
                     disabled={dayObj.isPast}
                   >
-                    {dayObj.day}
+                    <span className="day-number">{dayObj.day}</span>
                     {isSelected && (
-                      <div className="selected-check">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                      <div className="selection-ring"></div>
                     )}
                   </button>
                 );
@@ -323,81 +386,69 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
           </div>
         </div>
 
+        {/* Time Selection Section */}
         {selectedDate && (
-          <div className="selection-section time-section">
-            <h3 className="section-title">
-              Choose Time
-              {selectedStartTime && selectedEndTime && (
-                <span style={{ 
-                  fontSize: '14px', 
-                  fontWeight: 'normal', 
-                  marginLeft: '10px',
-                  color: '#696FC7'
-                }}>
-                  ({getBookingDuration()} hour{getBookingDuration() !== 1 ? 's' : ''})
-                </span>
-              )}
-            </h3>
-            <p style={{ 
-              fontSize: '13px', 
-              color: '#666', 
-              marginBottom: '15px',
-              marginTop: '-5px'
-            }}>
-              {!selectedStartTime 
-                ? 'Click to select start time' 
-                : !selectedEndTime 
-                  ? 'Click same time for 1 hour, or click later time for multiple hours'
-                  : `${selectedStartTime.time12} - ${selectedEndTime.time12}`
-              }
-            </p>
+          <div className="time-section">
+            <div className="time-header">
+              <h2 className="time-title">Select Time</h2>
+              <p className="time-subtitle">
+                {selectedDate.date.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+                {selectedStartTime && selectedEndTime && (
+                  <span style={{ display: 'block', marginTop: '0.25rem', color: '#95392f', fontWeight: 600 }}>
+                    Booking from {selectedStartTime.time12} to {selectedEndTime.time12}
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {selectedStartTime && selectedEndTime && (
+              <div className="time-summary">
+                <div className="time-summary-content">
+                  <div className="time-display">
+                    <span className="time-value">{selectedStartTime.time12}</span>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="time-value">{selectedEndTime.time12}</span>
+                  </div>
+                  <span className="duration-badge">
+                    {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <p>Loading available slots...</p>
+              <div className="loading-time">
+                <div className="spinner"></div>
+                <p>Loading slots...</p>
               </div>
             ) : (
-              <div className="times-grid">
+              <div className="time-slots-grid">
                 {timeSlots.map((slot) => {
                   const inRange = isSlotInRange(slot);
                   const isStart = selectedStartTime?.id === slot.id;
                   const isEnd = selectedEndTime?.id === slot.id;
                   
                   return (
-                    <div
+                    <button
                       key={slot.id}
-                      className={`time-card ${inRange ? 'selected' : ''} ${!slot.available ? 'unavailable' : ''}`}
+                      className={`time-slot ${inRange ? 'in-range' : ''} ${!slot.available ? 'unavailable' : ''} ${isEnd ? 'is-end' : ''}`}
                       onClick={() => handleTimeSlotClick(slot)}
-                      style={{
-                        borderColor: isStart || isEnd ? '#696FC7' : undefined,
-                        borderWidth: isStart || isEnd ? '2px' : undefined
-                      }}
+                      disabled={!slot.available}
                     >
-                      <span className="time-text">{slot.time12}</span>
-                      {!slot.available && <span className="unavailable-badge">Booked</span>}
-                      {isStart && (
-                        <span style={{
-                          fontSize: '10px',
-                          color: '#696FC7',
-                          fontWeight: '600',
-                          marginTop: '2px'
-                        }}>START</span>
-                      )}
-                      {isEnd && (
-                        <span style={{
-                          fontSize: '10px',
-                          color: '#696FC7',
-                          fontWeight: '600',
-                          marginTop: '2px'
-                        }}>END</span>
-                      )}
+                      <span className="slot-time">{slot.time12}</span>
+                      {!slot.available && <span className="slot-status">Booked</span>}
+                      {isStart && <span className="slot-marker">Start</span>}
+                      {isEnd && <span className="slot-marker end-marker">End</span>}
                       {inRange && (
-                        <div className="selected-check">
-                          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
+                        <div className="range-indicator"></div>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -406,76 +457,94 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
         )}
       </div>
 
+      {/* Book Button */}
       {selectedDate && selectedStartTime && selectedEndTime && (
-        <button 
-          className="continue-date-btn" 
-          onClick={handleBooking}
-          disabled={bookingLoading}
-        >
-          {bookingLoading ? 'Booking...' : `Book ${getBookingDuration()} Hour${getBookingDuration() !== 1 ? 's' : ''} - Complete Booking`}
-        </button>
+        <div className="action-footer">
+          <button 
+            className="book-btn" 
+            onClick={handleBooking}
+            disabled={bookingLoading}
+          >
+            {bookingLoading ? (
+              <>
+                <div className="button-spinner"></div>
+                <span>Processing...</span>
+              </>
+            ) : (
+              <>
+                <span>Complete Booking</span>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </>
+            )}
+          </button>
+          
+          <button 
+            className="reset-btn" 
+            onClick={() => setShowCancelPopup(true)}
+          >
+            Reset Selection
+          </button>
+        </div>
       )}
 
-      {/* Cancel Booking Popup */}
+      {/* Cancel Popup */}
       {showCancelPopup && (
-        <div className="cancel-popup-overlay" onClick={() => setShowCancelPopup(false)}>
-          <div className="cancel-popup" onClick={(e) => e.stopPropagation()}>
-            <div className="cancel-popup-header">
-              <div className="cancel-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="cancel-popup-title">Cancel Booking?</h3>
+        <div className="popup-overlay" onClick={() => setShowCancelPopup(false)}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
+            
+            <h3 className="popup-title">Reset Selection?</h3>
+            <p className="popup-description">
+              This will clear your selected date and time. You'll need to choose again.
+            </p>
 
-            <div className="cancel-popup-content">
-              <p className="cancel-popup-text">
-                Are you sure you want to cancel this booking? This action cannot be undone.
-              </p>
-
-              <div className="cancel-booking-details">
-                <div className="cancel-detail-row">
-                  <span className="cancel-detail-label">Court:</span>
-                  <span className="cancel-detail-value">{selectedCourt.name}</span>
-                </div>
-                <div className="cancel-detail-row">
-                  <span className="cancel-detail-label">Date:</span>
-                  <span className="cancel-detail-value">
-                    {selectedDate?.date.toLocaleDateString('en-US', { 
-                      month: 'short', 
-                      day: 'numeric', 
-                      year: 'numeric' 
-                    })}
-                  </span>
-                </div>
-                <div className="cancel-detail-row">
-                  <span className="cancel-detail-label">Time:</span>
-                  <span className="cancel-detail-value">
-                    {selectedStartTime?.time12} - {selectedEndTime?.time12}
-                  </span>
-                </div>
-                <div className="cancel-detail-row">
-                  <span className="cancel-detail-label">Duration:</span>
-                  <span className="cancel-detail-value">
-                    {getBookingDuration()} hour{getBookingDuration() !== 1 ? 's' : ''}
-                  </span>
-                </div>
+            <div className="booking-summary">
+              <div className="summary-row">
+                <span className="summary-label">Court</span>
+                <span className="summary-value">{selectedCourt.name}</span>
+              </div>
+              <div className="summary-row">
+                <span className="summary-label">Date</span>
+                <span className="summary-value">
+                  {selectedDate?.date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                  })}
+                </span>
+              </div>
+              <div className="summary-row">
+                <span className="summary-label">Time</span>
+                <span className="summary-value">
+                  {selectedStartTime?.time12} - {selectedEndTime?.time12}
+                </span>
+              </div>
+              <div className="summary-row highlight">
+                <span className="summary-label">Duration</span>
+                <span className="summary-value">
+                  {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
+                </span>
               </div>
             </div>
 
-            <div className="cancel-popup-actions">
+            <div className="popup-actions">
               <button 
-                className="cancel-btn-secondary" 
+                className="popup-btn secondary" 
                 onClick={() => setShowCancelPopup(false)}
               >
-                Keep Booking
+                Keep Selection
               </button>
               <button 
-                className="cancel-btn-primary" 
+                className="popup-btn primary" 
                 onClick={handleCancelBooking}
               >
-                Yes, Cancel
+                Reset
               </button>
             </div>
           </div>

@@ -14,6 +14,7 @@ function User({ section }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Determine active section from props
   const activeSection = section || 'order-history';
@@ -98,9 +99,17 @@ function User({ section }) {
   };
 
   const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('tokenExpiration');
     navigate('/');
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   const getInitials = () => {
@@ -173,6 +182,17 @@ function User({ section }) {
           </div>
           <div className="user-menu">
             <div className="user-buttons">
+              {/* Home button - only visible on mobile */}
+              <a 
+                href="/" 
+                className="mobile-only-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/');
+                }}
+              >
+                <p>Home</p>
+              </a>
               <a 
                 href="#" 
                 className={activeSection === 'order-history' ? 'active' : ''}
@@ -192,16 +212,6 @@ function User({ section }) {
                 }}
               >
                 <p>Profile</p>
-              </a>
-              <a 
-                href="#" 
-                className="back-to-home"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleBackToHome();
-                }}
-              >
-                <p>Back to Homepage</p>
               </a>
               <a 
                 href="#" 
@@ -236,6 +246,31 @@ function User({ section }) {
           )}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="logout-overlay" onClick={cancelLogout}>
+          <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="logout-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </div>
+            <h3 className="logout-title">Logout</h3>
+            <p className="logout-message">Are you sure you want to log out?</p>
+            <div className="logout-actions">
+              <button className="logout-cancel-btn" onClick={cancelLogout}>
+                Cancel
+              </button>
+              <button className="logout-confirm-btn" onClick={confirmLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

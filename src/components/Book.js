@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
+import Header from './Header';
 import DatePicker from './DatePicker';
 import '../styles/Book.css';
 
@@ -14,6 +15,8 @@ function Book() {
   const [courts, setCourts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState(null);
 
   // Fetch courts from API on component mount
   useEffect(() => {
@@ -29,7 +32,6 @@ function Book() {
       const token = localStorage.getItem('authToken');
       
       if (!token) {
-        // No token, redirect to login
         navigate('/login');
         return;
       }
@@ -38,13 +40,12 @@ function Book() {
         method: 'GET',
         headers: {
           'accept': '*/*',
-          'Authorization': token, // Already has "Bearer " prefix
+          'Authorization': token,
           'X-Language': language
         }
       });
 
       if (response.status === 401) {
-        // Unauthorized - token expired or invalid
         localStorage.removeItem('authToken');
         localStorage.removeItem('tokenExpiration');
         navigate('/login');
@@ -58,12 +59,11 @@ function Book() {
       const data = await response.json();
       console.log('Courts fetched:', data);
       
-      // Transform API data to match our UI format
       const transformedCourts = data.map((court, index) => ({
         id: court.id,
         name: `Court ${court.name}`,
         status: 'available',
-        apiData: court // Store original data for later use
+        apiData: court
       }));
 
       setCourts(transformedCourts);
@@ -90,114 +90,245 @@ function Book() {
     console.log('Booking data:', bookingData);
     
     if (bookingData.success) {
-      // Booking was successful, show confirmation or navigate
-      alert('Booking successful!');
-      // You can navigate to a confirmation page or reset the form
-      setShowDatePicker(false);
-      setSelectedCourt(null);
+      // Store booking details and show success popup
+      setBookingDetails(bookingData);
+      setShowSuccessPopup(true);
     }
   };
 
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    // Redirect to user history page
+    navigate('/user/history');
+  };
+
   if (showDatePicker) {
-    // Pass the full court object, not just the ID
     const courtObject = courts.find(c => c.id === selectedCourt);
     
     return (
-      <DatePicker
-        selectedCourt={courtObject}
-        onBack={handleBackToCourts}
-        onContinue={handleDateContinue}
-      />
+      <>
+        <Header />
+        <DatePicker
+          selectedCourt={courtObject}
+          onBack={handleBackToCourts}
+          onContinue={handleDateContinue}
+        />
+        
+        {/* Success Popup - Shows on top of DatePicker */}
+        {showSuccessPopup && bookingDetails && (
+          <div className="success-popup-overlay" onClick={handleSuccessPopupClose}>
+            <div className="success-popup" onClick={(e) => e.stopPropagation()}>
+              <div className="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              
+              <h2 className="success-title">Booking Successful!</h2>
+              <p className="success-message">
+                Your court has been booked successfully. See you on the court!
+              </p>
+
+              <div className="success-details">
+                <div className="success-detail-row">
+                  <span className="success-label">Court</span>
+                  <span className="success-value">{bookingDetails.court?.name}</span>
+                </div>
+                <div className="success-detail-row">
+                  <span className="success-label">Date</span>
+                  <span className="success-value">
+                    {bookingDetails.date?.date.toLocaleDateString('en-US', { 
+                      weekday: 'long',
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                </div>
+                <div className="success-detail-row">
+                  <span className="success-label">Time</span>
+                  <span className="success-value">
+                    {bookingDetails.startTime?.time12} - {bookingDetails.endTime?.time12}
+                  </span>
+                </div>
+                <div className="success-detail-row highlight">
+                  <span className="success-label">Duration</span>
+                  <span className="success-value">
+                    {bookingDetails.duration} {bookingDetails.duration === 1 ? 'hour' : 'hours'}
+                  </span>
+                </div>
+              </div>
+
+              <button className="success-ok-btn" onClick={handleSuccessPopupClose}>
+                <span>View Booking</span>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
   // Loading state
   if (loading) {
     return (
-      <div className="book-container">
-        <h2 className="book-title">Book Now</h2>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <p>Loading courts...</p>
+      <>
+        <Header />
+        <div className="book-container">
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p className="loading-text">Loading courts</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <div className="book-container">
-        <h2 className="book-title">Book Now</h2>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <p style={{ color: '#c33', marginBottom: '20px' }}>{error}</p>
-          <button 
-            onClick={fetchCourts}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#696FC7',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            Retry
-          </button>
+      <>
+        <Header />
+        <div className="book-container">
+          <div className="error-state">
+            <p className="error-text">{error}</p>
+            <button className="retry-btn" onClick={fetchCourts}>
+              Retry
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // Empty state
   if (courts.length === 0) {
     return (
-      <div className="book-container">
-        <h2 className="book-title">Book Now</h2>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <p>No courts available at the moment.</p>
+      <>
+        <Header />
+        <div className="book-container">
+          <div className="empty-state">
+            <p className="empty-text">No courts available</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="book-container">
-      <h2 className="book-title">Book Now</h2>
-      <p className="book-subtitle">Select your preferred padel court</p>
+    <>
+      <Header />
+      <div className="book-container">
+        <div className="book-header">
+          <h1 className="book-title">Select Court</h1>
+          <p className="book-subtitle">Choose your preferred padel court</p>
+        </div>
 
-      <div className="courts-grid">
-        {courts.map((court) => (
-          <div
-            key={court.id}
-            className={`court-card ${selectedCourt === court.id ? 'selected' : ''}`}
-            onClick={() => setSelectedCourt(court.id)}
-          >
-            <div className="court-icon">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
-                <line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" strokeWidth="2"/>
-                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-              </svg>
-            </div>
-            <h3 className="court-name">{court.name}</h3>
-            <span className="court-status">{court.status}</span>
-            {selectedCourt === court.id && (
-              <div className="selected-indicator">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+        <div className="courts-wrapper">
+          <div className="courts-grid">
+            {courts.map((court, index) => (
+              <div
+                key={court.id}
+                className={`court-card ${selectedCourt === court.id ? 'selected' : ''}`}
+                onClick={() => setSelectedCourt(court.id)}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="court-card-inner">
+                  <div className="court-number">{court.name.replace('Court ', '')}</div>
+                  
+                  <div className="court-info">
+                    <h3 className="court-name">{court.name}</h3>
+                    <span className="court-status">
+                      <span className="status-dot"></span>
+                      Available
+                    </span>
+                  </div>
+
+                  {selectedCourt === court.id && (
+                    <div className="selected-indicator">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            ))}
           </div>
-        ))}
+        </div>
+
+        {selectedCourt && (
+          <div className="action-wrapper">
+            <button className="continue-btn" onClick={handleContinue}>
+              <span className="continue-text">Continue</span>
+              <svg className="continue-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
-      {selectedCourt && (
-        <button className="continue-booking-btn" onClick={handleContinue}>
-          Continue with {courts.find(c => c.id === selectedCourt)?.name}
-        </button>
+      {/* Success Popup */}
+      {showSuccessPopup && bookingDetails && (
+        <div className="success-popup-overlay" onClick={handleSuccessPopupClose}>
+          <div className="success-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="success-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            
+            <h2 className="success-title">Booking Successful!</h2>
+            <p className="success-message">
+              Your court has been booked successfully. See you on the court!
+            </p>
+
+            <div className="success-details">
+              <div className="success-detail-row">
+                <span className="success-label">Court</span>
+                <span className="success-value">{bookingDetails.court?.name}</span>
+              </div>
+              <div className="success-detail-row">
+                <span className="success-label">Date</span>
+                <span className="success-value">
+                  {bookingDetails.date?.date.toLocaleDateString('en-US', { 
+                    weekday: 'long',
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                  })}
+                </span>
+              </div>
+              <div className="success-detail-row">
+                <span className="success-label">Time</span>
+                <span className="success-value">
+                  {bookingDetails.startTime?.time12} - {bookingDetails.endTime?.time12}
+                </span>
+              </div>
+              <div className="success-detail-row highlight">
+                <span className="success-label">Duration</span>
+                <span className="success-value">
+                  {bookingDetails.duration} {bookingDetails.duration === 1 ? 'hour' : 'hours'}
+                </span>
+              </div>
+            </div>
+
+            <button className="success-ok-btn" onClick={handleSuccessPopupClose}>
+              <span>View Booking</span>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

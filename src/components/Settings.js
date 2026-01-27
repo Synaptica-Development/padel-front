@@ -410,7 +410,7 @@ function Settings() {
       
         <div className="settings-title-section">
           <h2 className="settings-title">Profile Information</h2>
-          <p className="settings-subtitle">Manage your profile information</p>
+        
         </div>
       </div>
 

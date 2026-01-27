@@ -190,6 +190,26 @@ function Header() {
   return (
     <header className="header">
       <div className="header-container">
+        {/* Mobile Profile Icon - Next to Logo - Only visible on mobile when logged in */}
+        {isLoggedIn && (
+          <Link to="/user" className="mobile-header-profile" onClick={closeMenu}>
+            <div className="mobile-header-avatar">
+              {userProfile?.profileImageUrl ? (
+                <img 
+                  src={userProfile.profileImageUrl} 
+                  alt="Profile" 
+                  className="mobile-header-avatar-img"
+                />
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              )}
+            </div>
+          </Link>
+        )}
+
         <div className="header-logo">
           <Link to="/" className="logo-link" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <span className="logo-text">Padel Rocha</span>
@@ -249,7 +269,6 @@ function Header() {
                   className="nav-link profile-nav-link" 
                   onClick={handleProfileClick}
                 >
-                 
                   Profile
                 </a>
               </li>

@@ -281,3 +281,15 @@
     font-size: 20px;
   }
 }
+
+
+/* Hide Home button on desktop, show only on mobile */
+.user-buttons .mobile-only-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .user-buttons .mobile-only-btn {
+    display: block !important;
+  }
+}

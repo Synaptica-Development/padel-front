@@ -5,6 +5,8 @@ import '../styles/History.css';
 
 const API_BASE_URL = 'http://api.padelrocha.synaptica.online';
 
+
+
 function History() {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -18,6 +20,10 @@ function History() {
   useEffect(() => {
     fetchBookingHistory();
   }, [page]);
+
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const fetchBookingHistory = async () => {
     try {
