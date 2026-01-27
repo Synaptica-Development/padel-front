@@ -114,9 +114,9 @@ function Settings() {
       }
 
       const uploadFormData = new FormData();
-      uploadFormData.append('file', file);
+      uploadFormData.append('ProfileIcon', file);
 
-      const response = await fetch(`${API_BASE_URL}/api/FileUpload/upload?ImageType=Profile`, {
+      const response = await fetch(`${API_BASE_URL}/api/User/change/profile-picture`, {
         method: 'PUT',
         headers: {
           'accept': '*/*',
@@ -138,20 +138,16 @@ function Settings() {
       }
 
       const result = await response.json();
-      console.log('Profile picture uploaded:', result);
-      console.log('Image URL:', result.imageLink);
+      console.log('Profile picture upload response:', result);
 
-      // Update form data with new profile picture URL
-      setFormData(prev => {
-        const updated = {
-          ...prev,
-          profilePictureUrl: result.imageLink
-        };
-        console.log('Updated formData:', updated);
-        return updated;
-      });
-
-      setSuccess('Profile picture uploaded! Click "Save Changes" to confirm.');
+      // If the API returns true, refresh the profile to get the updated image URL
+      if (result === true) {
+        setSuccess('Profile picture uploaded successfully!');
+        // Refresh profile to get the new image URL
+        await fetchUserProfile();
+      } else {
+        throw new Error('Upload did not complete successfully');
+      }
 
     } catch (err) {
       console.error('Error uploading profile picture:', err);
@@ -161,12 +157,58 @@ function Settings() {
     }
   };
 
-  const handleRemoveProfilePicture = () => {
-    setFormData(prev => ({
-      ...prev,
-      profilePictureUrl: ''
-    }));
-    setSuccess('Profile picture removed! Click "Save Changes" to confirm.');
+  const handleRemoveProfilePicture = async () => {
+    try {
+      setUploadingPhoto(true);
+      setError('');
+      setSuccess('');
+
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      // Create an empty FormData to send an empty value
+      const uploadFormData = new FormData();
+      uploadFormData.append('ProfileIcon', '');
+
+      const response = await fetch(`${API_BASE_URL}/api/User/change/profile-picture`, {
+        method: 'PUT',
+        headers: {
+          'accept': '*/*',
+          'Authorization': token,
+          'X-Language': 'en'
+        },
+        body: uploadFormData
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiration');
+        navigate('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to remove profile picture');
+      }
+
+      const result = await response.json();
+      console.log('Profile picture removal response:', result);
+
+      if (result === true) {
+        setSuccess('Profile picture removed successfully!');
+        // Refresh profile to get the updated state
+        await fetchUserProfile();
+      }
+
+    } catch (err) {
+      console.error('Error removing profile picture:', err);
+      setError('Failed to remove profile picture. Please try again.');
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -215,11 +257,6 @@ function Settings() {
       // Only add email if it's not empty
       if (formData.email && formData.email.trim()) {
         params.append('email', formData.email.trim());
-      }
-
-      // Add profile picture URL if changed
-      if (formData.profilePictureUrl !== originalData.profilePictureUrl) {
-        params.append('profilePictureUrl', formData.profilePictureUrl || '');
       }
 
       console.log('Sending update with params:', params.toString());
@@ -582,7 +619,7 @@ function Settings() {
           >
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M21 3v5h-5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Reset Changes
