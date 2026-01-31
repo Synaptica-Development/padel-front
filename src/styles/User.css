@@ -363,6 +363,7 @@
 
   .user-booking-container {
     padding: 4.5rem 1rem 1rem;
+    padding-top: 20px;
   }
 
   .user-booking-container > div {
