@@ -1529,3 +1529,71 @@
     font-size: 0.85rem;
   }
 }
+
+
+
+/* Additional styles for price display */
+
+/* Price badge in time summary - matching hours badge style */
+.booking-details-badges {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 1.1rem;
+  background: white;
+  border: 1.5px solid #10b981;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #10b981;
+  letter-spacing: 0.02em;
+}
+
+/* Price display on individual time slots */
+.slot-price {
+  display: block;
+  font-size: 0.75rem;
+  color: #10b981;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+/* Update time slot styling to accommodate price */
+.time-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.5rem;
+}
+
+.time-slot.in-range .slot-price {
+  color: white;
+}
+
+.time-slot.unavailable .slot-price {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .booking-details-badges {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .price-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .slot-price {
+    font-size: 0.7rem;
+  }
+}

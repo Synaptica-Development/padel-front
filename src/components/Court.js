@@ -36,7 +36,8 @@ function Court({
                 court: selectedCourt,
                 startTime: selectedStartTime,
                 endTime: selectedEndTime,
-                duration: getBookingDuration()
+                duration: getBookingDuration(),
+                totalPrice: getTotalPrice()
             });
         } else {
             onBookingReady(null);
@@ -93,10 +94,12 @@ function Court({
 
             console.log('📥 API RESPONSE:', availableHoursData);
 
-            // Create availability map
+            // Create availability and price maps
             const hourAvailabilityMap = {};
+            const hourPriceMap = {};
             availableHoursData.forEach(slot => {
                 hourAvailabilityMap[slot.hour] = slot.isBooked === false;
+                hourPriceMap[slot.hour] = slot.price || 0;
             });
 
             const bookedHours = availableHoursData
@@ -111,19 +114,19 @@ function Court({
             console.log('  ❌ BOOKED hours:', bookedHours.length > 0 ? bookedHours : 'None');
             console.log('  ✅ AVAILABLE hours:', availableHours);
 
-            const displaySlots = generateTimeSlots(hourAvailabilityMap);
+            const displaySlots = generateTimeSlots(hourAvailabilityMap, hourPriceMap);
             setTimeSlots(displaySlots);
 
         } catch (err) {
             console.error('Error fetching available hours:', err);
             setError('Failed to load available time slots.');
-            setTimeSlots(generateTimeSlots({}));
+            setTimeSlots(generateTimeSlots({}, {}));
         } finally {
             setTimeSlotsLoading(false);
         }
     };
 
-    const generateTimeSlots = (hourAvailabilityMap) => {
+    const generateTimeSlots = (hourAvailabilityMap, hourPriceMap) => {
         const slots = [];
         for (let hour = 0; hour <= 23; hour++) {
             const time24 = `${hour.toString().padStart(2, '0')}:00`;
@@ -143,11 +146,13 @@ function Court({
                 id: hour,
                 time24: time24,
                 time12: time12,
-                available: hourAvailabilityMap[hour] === true
+                available: hourAvailabilityMap[hour] === true,
+                price: hourPriceMap[hour] || 0
             });
         }
         return slots;
     };
+
     const handleTimeSlotClick = (slot) => {
         if (!slot.available) return;
 
@@ -234,6 +239,20 @@ function Court({
         return selectedEndTime.id - selectedStartTime.id;
     };
 
+    // Calculate total price for selected time range
+    const getTotalPrice = () => {
+        if (!selectedStartTime || !selectedEndTime) return 0;
+
+        let totalPrice = 0;
+        for (let i = selectedStartTime.id; i < selectedEndTime.id; i++) {
+            const slot = timeSlots.find(s => s.id === i);
+            if (slot) {
+                totalPrice += slot.price;
+            }
+        }
+        return totalPrice;
+    };
+
     return (
         <div className="courts-grid">
             {courts.map((court, index) => (
@@ -283,9 +302,14 @@ function Court({
                                             </svg>
                                             <span className="time-value">{selectedEndTime.time12}</span>
                                         </div>
-                                        <span className="duration-badge">
-                                            {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
-                                        </span>
+                                        <div className="booking-details-badges">
+                                            <span className="duration-badge">
+                                                {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
+                                            </span>
+                                            <span className="price-badge">
+                                                ₾{getTotalPrice()}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -326,6 +350,9 @@ function Court({
                                                     disabled={!slot.available}
                                                 >
                                                     <span className="slot-time">{slot.time12}</span>
+                                                    {slot.available && slot.price > 0 && (
+                                                        <span className="slot-price">₾{slot.price}</span>
+                                                    )}
                                                     {!slot.available && <span className="slot-status">Booked</span>}
                                                     {slot.available && isIncluded && (
                                                         <div className="range-indicator"></div>

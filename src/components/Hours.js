@@ -9,7 +9,8 @@ function Hours({
     onTimeSlotClick,
     onRefreshSlots,
     isSlotInRange,
-    getBookingDuration
+    getBookingDuration,
+    getTotalPrice // New prop for calculating total price
 }) {
     return (
         <div className="inline-time-selection">
@@ -23,9 +24,14 @@ function Hours({
                             </svg>
                             <span className="time-value">{selectedEndTime.time12}</span>
                         </div>
-                        <span className="duration-badge">
-                            {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
-                        </span>
+                        <div className="booking-details-badges">
+                            <span className="duration-badge">
+                                {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
+                            </span>
+                            <span className="price-badge">
+                                ₾{getTotalPrice()}
+                            </span>
+                        </div>
                     </div>
                 </div>
             )}
@@ -66,6 +72,9 @@ function Hours({
                                     disabled={!slot.available}
                                 >
                                     <span className="slot-time">{slot.time12}</span>
+                                    {slot.available && slot.price > 0 && (
+                                        <span className="slot-price">₾{slot.price}</span>
+                                    )}
                                     {!slot.available && <span className="slot-status">Booked</span>}
                                     {slot.available && isIncluded && (
                                         <div className="range-indicator"></div>
