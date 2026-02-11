@@ -14,7 +14,12 @@ function History() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(16);
   const [hasMore, setHasMore] = useState(true);
-  const [filter, setFilter] = useState('All'); // 'All', 'OnlyActive', 'OnlyExpired', 'OnlyCanceled'
+  const [filter, setFilter] = useState('All');
+
+  // Popup states
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showCancelSuccess, setShowCancelSuccess] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   // Map display filter to API filter
   const filterMap = {
@@ -86,6 +91,56 @@ function History() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelClick = (bookingId, e) => {
+    e.stopPropagation();
+    setSelectedBookingId(bookingId);
+    setShowCancelConfirm(true);
+  };
+
+  const handleCancelConfirm = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+
+      const response = await fetch(`${API_BASE_URL}/api/Courts/decline`, {
+        method: 'POST',
+        headers: {
+          'accept': '*/*',
+          'Authorization': token,
+          'X-Language': language,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          bookID: selectedBookingId
+        })
+      });
+
+      if (response.ok) {
+        setShowCancelConfirm(false);
+        setShowCancelSuccess(true);
+      } else {
+        alert('Failed to cancel booking. Please try again.');
+        setShowCancelConfirm(false);
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('An error occurred. Please try again.');
+      setShowCancelConfirm(false);
+    }
+  };
+
+  const handleCancelCancel = () => {
+    setShowCancelConfirm(false);
+    setSelectedBookingId(null);
+  };
+
+  const handleSuccessClose = () => {
+    setShowCancelSuccess(false);
+    setSelectedBookingId(null);
+    setPage(1);
+    setBookings([]);
+    fetchBookingHistory();
   };
 
   const handleFilterChange = (newFilter) => {
@@ -339,8 +394,18 @@ function History() {
               </div>
             </div>
 
-            <div className="booking-id">
-              <span>ID: {booking.id.slice(0, 8)}...</span>
+            <div className="booking-footer">
+              <div className="booking-id">
+                <span>ID: {booking.id.slice(0, 8)}...</span>
+              </div>
+              {booking.status.toLowerCase() === 'active' && (
+                <button
+                  className="cancel-booking-btn"
+                  onClick={(e) => handleCancelClick(booking.id, e)}
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -355,6 +420,68 @@ function History() {
           >
             {loading ? 'Loading...' : 'Load More'}
           </button>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Popup */}
+      {showCancelConfirm && (
+        <div className="cancel-popup-overlay">
+          <div className="cancel-popup">
+            <div className="cancel-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="cancel-title">Cancel Booking?</h3>
+            <p className="cancel-message">
+              Are you sure you want to cancel this booking? This action cannot be undone.
+            </p>
+            <div className="cancel-warning">
+              <svg className="cancel-warning-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <p className="cancel-warning-text">
+                Once cancelled, you will need to make a new booking if you wish to reserve a court again.
+              </p>
+            </div>
+            <div className="cancel-buttons">
+              <button className="cancel-btn cancel-btn-no" onClick={handleCancelCancel}>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Keep Booking
+              </button>
+              <button className="cancel-btn cancel-btn-yes" onClick={handleCancelConfirm}>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Success Popup */}
+      {showCancelSuccess && (
+        <div className="cancel-popup-overlay">
+          <div className="cancel-success-popup">
+            <div className="cancel-success-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="cancel-success-title">Booking Cancelled</h3>
+            <p className="cancel-success-message">
+              Your booking has been successfully cancelled. We hope to see you again soon!
+            </p>
+            <button className="cancel-success-ok-btn" onClick={handleSuccessClose}>
+              Got it
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
     </div>
