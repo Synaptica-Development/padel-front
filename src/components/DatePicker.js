@@ -11,7 +11,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedStartTime, setSelectedStartTime] = useState(null);
   const [selectedEndTime, setSelectedEndTime] = useState(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 0, 1));
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [timeSlots, setTimeSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -107,13 +107,13 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
   const generateCalendarDays = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    
+
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-    
+
     const days = [];
-    
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const dayOfWeek = date.getDay();
@@ -126,7 +126,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
         isPast: date < new Date(new Date().setHours(0, 0, 0, 0))
       });
     }
-    
+
     return days;
   };
 
@@ -205,7 +205,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
 
       const startDateTime = new Date(selectedDate.date);
       startDateTime.setHours(selectedStartTime.id, 0, 0, 0);
-      
+
       const endDateTime = new Date(selectedDate.date);
       endDateTime.setHours(selectedEndTime.id, 0, 0, 0);
 
@@ -287,7 +287,10 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
   const handleNextMonth = () => {
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(currentMonth.getMonth() + 1);
-    if (newMonth.getFullYear() <= 2026) {
+    // Allow navigation up to 1 year in the future
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() + 1);
+    if (newMonth <= maxDate) {
       setCurrentMonth(newMonth);
     }
   };
@@ -307,10 +310,10 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
       <div className="date-header">
         <button className="back-btn" onClick={onBack}>
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 12H5M5 12l7 7M5 12l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M19 12H5M5 12l7 7M5 12l7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        
+
         <div className="header-content">
           <h1 className="date-title">Book Your Slot</h1>
           <p className="date-subtitle">{selectedCourt.name}</p>
@@ -320,7 +323,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
       {error && (
         <div className="error-banner">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           {error}
         </div>
@@ -330,27 +333,31 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
         {/* Calendar Section */}
         <div className="calendar-section">
           <div className="calendar-header">
-            <button 
-              className="month-nav-btn" 
+            <button
+              className="month-nav-btn"
               onClick={handlePrevMonth}
               disabled={currentMonth <= new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
             >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            
+
             <h2 className="month-title">
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h2>
-            
-            <button 
-              className="month-nav-btn" 
+
+            <button
+              className="month-nav-btn"
               onClick={handleNextMonth}
-              disabled={currentMonth.getFullYear() >= 2026 && currentMonth.getMonth() >= 11}
+              disabled={(() => {
+                const maxDate = new Date();
+                maxDate.setFullYear(maxDate.getFullYear() + 1);
+                return currentMonth >= new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+              })()}
             >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
@@ -361,12 +368,12 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
                 <div key={`weekday-${index}`} className="weekday-label">{day.charAt(0)}</div>
               ))}
             </div>
-            
+
             <div className="calendar-days">
               {calendarDays.map((dayObj, index) => {
-                const isSelected = selectedDate && 
+                const isSelected = selectedDate &&
                   dayObj.date.toDateString() === selectedDate.date.toDateString();
-                
+
                 return (
                   <button
                     key={index}
@@ -392,10 +399,10 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
             <div className="time-header">
               <h2 className="time-title">Select Time</h2>
               <p className="time-subtitle">
-                {selectedDate.date.toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  month: 'short', 
-                  day: 'numeric' 
+                {selectedDate.date.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'short',
+                  day: 'numeric'
                 })}
                 {selectedStartTime && selectedEndTime && (
                   <span style={{ display: 'block', marginTop: '0.25rem', color: '#95392f', fontWeight: 600 }}>
@@ -411,7 +418,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
                   <div className="time-display">
                     <span className="time-value">{selectedStartTime.time12}</span>
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <span className="time-value">{selectedEndTime.time12}</span>
                   </div>
@@ -433,7 +440,7 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
                   const inRange = isSlotInRange(slot);
                   const isStart = selectedStartTime?.id === slot.id;
                   const isEnd = selectedEndTime?.id === slot.id;
-                  
+
                   return (
                     <button
                       key={slot.id}
@@ -460,8 +467,8 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
       {/* Book Button */}
       {selectedDate && selectedStartTime && selectedEndTime && (
         <div className="action-footer">
-          <button 
-            className="book-btn" 
+          <button
+            className="book-btn"
             onClick={handleBooking}
             disabled={bookingLoading}
           >
@@ -474,14 +481,14 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
               <>
                 <span>Complete Booking</span>
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </>
             )}
           </button>
-          
-          <button 
-            className="reset-btn" 
+
+          <button
+            className="reset-btn"
             onClick={() => setShowCancelPopup(true)}
           >
             Reset Selection
@@ -495,10 +502,10 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
             <div className="popup-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            
+
             <h3 className="popup-title">Reset Selection?</h3>
             <p className="popup-description">
               This will clear your selected date and time. You'll need to choose again.
@@ -512,10 +519,10 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
               <div className="summary-row">
                 <span className="summary-label">Date</span>
                 <span className="summary-value">
-                  {selectedDate?.date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric', 
-                    year: 'numeric' 
+                  {selectedDate?.date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
                   })}
                 </span>
               </div>
@@ -534,14 +541,14 @@ function DatePicker({ selectedCourt, onBack, onContinue }) {
             </div>
 
             <div className="popup-actions">
-              <button 
-                className="popup-btn secondary" 
+              <button
+                className="popup-btn secondary"
                 onClick={() => setShowCancelPopup(false)}
               >
                 Keep Selection
               </button>
-              <button 
-                className="popup-btn primary" 
+              <button
+                className="popup-btn primary"
                 onClick={handleCancelBooking}
               >
                 Reset
