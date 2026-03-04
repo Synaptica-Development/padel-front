@@ -16,14 +16,12 @@ function User({ section }) {
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Determine active section from props
   const activeSection = section || 'order-history';
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // Handle window resize to auto-open sidebar on desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
@@ -32,7 +30,6 @@ function User({ section }) {
         setIsSidebarOpen(false);
       }
     };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -66,7 +63,6 @@ function User({ section }) {
       }
 
       const data = await response.json();
-      console.log('User profile data:', data);
       setUserData(data);
     } catch (err) {
       console.error('Error fetching user profile:', err);
@@ -76,7 +72,6 @@ function User({ section }) {
   };
 
   const toggleSidebar = () => {
-    // Only allow toggle on mobile
     if (window.innerWidth <= 768) {
       setIsSidebarOpen(!isSidebarOpen);
     }
@@ -88,19 +83,12 @@ function User({ section }) {
     } else if (section === 'settings') {
       navigate('/user/settings');
     }
-    // Close sidebar on mobile after selection
     if (window.innerWidth <= 768) {
       setIsSidebarOpen(false);
     }
   };
 
-  const handleBackToHome = () => {
-    navigate('/');
-  };
-
-  const handleLogout = () => {
-    setShowLogoutModal(true);
-  };
+  const handleLogout = () => setShowLogoutModal(true);
 
   const confirmLogout = () => {
     localStorage.removeItem('authToken');
@@ -108,9 +96,7 @@ function User({ section }) {
     navigate('/');
   };
 
-  const cancelLogout = () => {
-    setShowLogoutModal(false);
-  };
+  const cancelLogout = () => setShowLogoutModal(false);
 
   const getInitials = () => {
     if (!userData) return '?';
@@ -123,8 +109,7 @@ function User({ section }) {
     <>
       <Header2 />
       <div className='user-body'>
-        {/* Hamburger Menu Button - Only visible on mobile */}
-        <button 
+        <button
           className={`hamburger-menu ${isSidebarOpen ? 'active' : ''}`}
           onClick={toggleSidebar}
           aria-label="Toggle menu"
@@ -134,92 +119,74 @@ function User({ section }) {
           <span></span>
         </button>
 
-        {/* Overlay for mobile only */}
         {isSidebarOpen && window.innerWidth <= 768 && (
-          <div 
-            className="sidebar-overlay" 
-            onClick={() => setIsSidebarOpen(false)}
-          ></div>
+          <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
         )}
 
-        {/* Sidebar */}
         <div className={`user-sidebar-container ${isSidebarOpen ? 'open' : ''}`}>
           <div className="user-items">
             <div className="user-picture">
               {loading ? (
                 <div className="user-picture-loading">Loading...</div>
               ) : userData?.profileImageUrl ? (
-                <img 
-                  src={userData.profileImageUrl} 
-                  alt="Profile" 
-                  className="user-picture-img"
-                  onError={(e) => {
-                    console.error('Failed to load profile image:', userData.profileImageUrl);
-                  }}
-                />
+                <img src={userData.profileImageUrl} alt="Profile" className="user-picture-img" />
               ) : (
-                <div className="user-picture-placeholder">
-                  {getInitials()}
-                </div>
+                <div className="user-picture-placeholder">{getInitials()}</div>
               )}
             </div>
             <div className="user-name">
-              <p>
-                {loading 
-                  ? 'Loading...' 
-                  : `${userData?.name || ''} ${userData?.lastName || ''}`
-                }
-              </p>
+              <p>{loading ? 'Loading...' : `${userData?.name || ''} ${userData?.lastName || ''}`}</p>
             </div>
             <div className="user-email">
-              <p>
-                {loading 
-                  ? 'Loading...' 
-                  : userData?.email || userData?.phoneNumber || 'No contact info'
-                }
-              </p>
+              <p>{loading ? 'Loading...' : userData?.email || userData?.phoneNumber || 'No contact info'}</p>
             </div>
+
+            {/* Balance & Refund info */}
+            {!loading && userData && (
+              <div className="user-stats">
+                <div className="user-stat-item">
+                  <span className="user-stat-label">Balance</span>
+                  <span className="user-stat-value">₾{userData.balance?.toFixed(2) ?? '0.00'}</span>
+                </div>
+                <div className="user-stat-divider" />
+                <div className="user-stat-item">
+                  <span className="user-stat-label">Refunds left</span>
+                  <span className={`user-stat-value ${userData.refundRetryQuantity === 0 ? 'user-stat-zero' : ''}`}>
+                    {userData.refundRetryQuantity ?? 0}
+                    <span className="user-stat-sub"> / 12</span>
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
+
           <div className="user-menu">
             <div className="user-buttons">
-              {/* Home button - only visible on mobile */}
-              <a 
-                href="/" 
+              <a
+                href="/"
                 className="mobile-only-btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/');
-                }}
+                onClick={(e) => { e.preventDefault(); navigate('/'); }}
               >
                 <p>Home</p>
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className={activeSection === 'order-history' ? 'active' : ''}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick('order-history');
-                }}
+                onClick={(e) => { e.preventDefault(); handleNavClick('order-history'); }}
               >
                 <p>Order History</p>
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className={activeSection === 'settings' ? 'active' : ''}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick('settings');
-                }}
+                onClick={(e) => { e.preventDefault(); handleNavClick('settings'); }}
               >
                 <p>Profile</p>
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="logout-btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleLogout();
-                }}
+                onClick={(e) => { e.preventDefault(); handleLogout(); }}
               >
                 <p>Logout</p>
               </a>
@@ -227,27 +194,19 @@ function User({ section }) {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className={`user-booking-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
           {activeSection === 'order-history' && (
-            <div className="order-history-container active">
-              <History />
-            </div>
+            <div className="order-history-container active"><History /></div>
           )}
           {activeSection === 'entry' && (
-            <div className="order-history-container active">
-              <Entry />
-            </div>
+            <div className="order-history-container active"><Entry /></div>
           )}
           {activeSection === 'settings' && (
-            <div className="settings-wrapper active">
-              <Settings />
-            </div>
+            <div className="settings-wrapper active"><Settings /></div>
           )}
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="logout-overlay" onClick={cancelLogout}>
           <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
@@ -261,12 +220,8 @@ function User({ section }) {
             <h3 className="logout-title">Logout</h3>
             <p className="logout-message">Are you sure you want to log out?</p>
             <div className="logout-actions">
-              <button className="logout-cancel-btn" onClick={cancelLogout}>
-                Cancel
-              </button>
-              <button className="logout-confirm-btn" onClick={confirmLogout}>
-                Logout
-              </button>
+              <button className="logout-cancel-btn" onClick={cancelLogout}>Cancel</button>
+              <button className="logout-confirm-btn" onClick={confirmLogout}>Logout</button>
             </div>
           </div>
         </div>
