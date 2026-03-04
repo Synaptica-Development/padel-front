@@ -10,26 +10,23 @@ function Court({
     selectedCourt,
     onCourtSelect,
     selectedDate,
-    onBookingReady // Callback when booking is ready
+    onBookingReady
 }) {
     const navigate = useNavigate();
     const { language } = useLanguage();
 
-    // Time selection states
     const [timeSlots, setTimeSlots] = useState([]);
     const [selectedStartTime, setSelectedStartTime] = useState(null);
     const [selectedEndTime, setSelectedEndTime] = useState(null);
     const [timeSlotsLoading, setTimeSlotsLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Fetch time slots when a court is selected
     useEffect(() => {
         if (selectedCourt && selectedDate) {
             fetchAvailableTimeSlots();
         }
     }, [selectedCourt, selectedDate]);
 
-    // Notify parent when booking is ready
     useEffect(() => {
         if (selectedStartTime && selectedEndTime && selectedCourt) {
             onBookingReady({
@@ -48,35 +45,18 @@ function Court({
         try {
             setTimeSlotsLoading(true);
             setError('');
-
-            // Reset time selection when fetching new slots
             setSelectedStartTime(null);
             setSelectedEndTime(null);
 
             const token = localStorage.getItem('authToken');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+            if (!token) { navigate('/login'); return; }
 
             const dateStr = selectedDate.date.toISOString().split('T')[0];
-
-            console.log('========================================');
-            console.log('📅 FETCHING AVAILABILITY FOR:');
-            console.log('  Date (YYYY-MM-DD):', dateStr);
-            console.log('  Court ID:', selectedCourt.id);
-            console.log('  Court Name:', selectedCourt.name);
-            console.log('========================================');
-
             const apiUrl = `${API_BASE_URL}/api/Courts/aviable-hours?Day=${dateStr}&CourtID=${selectedCourt.id}`;
 
             const response = await fetch(apiUrl, {
                 method: 'GET',
-                headers: {
-                    'accept': '*/*',
-                    'Authorization': token,
-                    'X-Language': language
-                }
+                headers: { 'accept': '*/*', 'Authorization': token, 'X-Language': language }
             });
 
             if (response.status === 401) {
@@ -86,15 +66,10 @@ function Court({
                 return;
             }
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch available hours: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Failed to fetch available hours: ${response.status}`);
 
             const availableHoursData = await response.json();
 
-            console.log('📥 API RESPONSE:', availableHoursData);
-
-            // Create availability and price maps
             const hourAvailabilityMap = {};
             const hourPriceMap = {};
             availableHoursData.forEach(slot => {
@@ -102,20 +77,7 @@ function Court({
                 hourPriceMap[slot.hour] = slot.price || 0;
             });
 
-            const bookedHours = availableHoursData
-                .filter(slot => slot.isBooked === true)
-                .map(slot => slot.hour);
-
-            const availableHours = availableHoursData
-                .filter(slot => slot.isBooked === false)
-                .map(slot => slot.hour);
-
-            console.log('📊 AVAILABILITY SUMMARY:');
-            console.log('  ❌ BOOKED hours:', bookedHours.length > 0 ? bookedHours : 'None');
-            console.log('  ✅ AVAILABLE hours:', availableHours);
-
-            const displaySlots = generateTimeSlots(hourAvailabilityMap, hourPriceMap);
-            setTimeSlots(displaySlots);
+            setTimeSlots(generateTimeSlots(hourAvailabilityMap, hourPriceMap));
 
         } catch (err) {
             console.error('Error fetching available hours:', err);
@@ -130,22 +92,16 @@ function Court({
         const slots = [];
         for (let hour = 0; hour <= 23; hour++) {
             const time24 = `${hour.toString().padStart(2, '0')}:00`;
-
             let time12;
-            if (hour === 0) {
-                time12 = '12:00 AM';
-            } else if (hour < 12) {
-                time12 = `${hour}:00 AM`;
-            } else if (hour === 12) {
-                time12 = '12:00 PM';
-            } else {
-                time12 = `${hour - 12}:00 PM`;
-            }
+            if (hour === 0) time12 = '12:00 AM';
+            else if (hour < 12) time12 = `${hour}:00 AM`;
+            else if (hour === 12) time12 = '12:00 PM';
+            else time12 = `${hour - 12}:00 PM`;
 
             slots.push({
                 id: hour,
-                time24: time24,
-                time12: time12,
+                time24,
+                time12,
                 available: hourAvailabilityMap[hour] === true,
                 price: hourPriceMap[hour] || 0
             });
@@ -156,73 +112,55 @@ function Court({
     const handleTimeSlotClick = (slot) => {
         if (!slot.available) return;
 
-        // No selection yet - this becomes the start AND auto-select next hour
+        // No selection yet — set start and auto-select +1 hour as end
         if (!selectedStartTime) {
             setSelectedStartTime(slot);
-            // Automatically set end time to next hour (minimum 1 hour booking)
             const nextSlot = timeSlots.find(s => s.id === slot.id + 1);
-            if (nextSlot) {
-                setSelectedEndTime(nextSlot);
-            } else {
-                // If at last hour (23:00), create virtual end slot at 24:00
-                setSelectedEndTime({ ...slot, id: slot.id + 1, time12: '12:00 AM', time24: '00:00' });
-            }
+            setSelectedEndTime(nextSlot || { ...slot, id: slot.id + 1, time12: '12:00 AM', time24: '00:00' });
             return;
         }
 
-        // If clicking on the start time - deselect everything
+        // Clicking the start slot — deselect everything
         if (slot.id === selectedStartTime.id) {
             setSelectedStartTime(null);
             setSelectedEndTime(null);
             return;
         }
 
-        // Start is selected and end is selected
         if (selectedStartTime && selectedEndTime) {
-            const lastIncludedSlotId = selectedEndTime.id - 1;
+            const lastIncludedId = selectedEndTime.id - 1;
 
-            // If clicking on the last included slot - remove it (move back one hour)
-            if (slot.id === lastIncludedSlotId) {
-                const newEndSlot = timeSlots.find(s => s.id === selectedEndTime.id - 1);
-                if (newEndSlot && newEndSlot.id > selectedStartTime.id) {
-                    setSelectedEndTime(newEndSlot);
-                } else {
-                    // Minimum 1 hour, so keep at least 1 hour
-                    setSelectedEndTime(timeSlots.find(s => s.id === selectedStartTime.id + 1));
-                }
+            // Clicking the last included slot — shrink by 1 hour
+            if (slot.id === lastIncludedId) {
+                if (lastIncludedId === selectedStartTime.id) return; // minimum 1 hour, do nothing
+                const newEnd = timeSlots.find(s => s.id === selectedEndTime.id - 1);
+                setSelectedEndTime(newEnd);
                 return;
             }
 
-            // If clicking after the current end - extend the range
+            // Clicking after the current end — extend range if all slots available
             if (slot.id >= selectedEndTime.id) {
                 const slotsToCheck = timeSlots.filter(s => s.id >= selectedEndTime.id && s.id <= slot.id);
-                const allAvailable = slotsToCheck.every(s => s.available);
-
-                if (allAvailable) {
-                    const actualEndSlot = timeSlots.find(s => s.id === slot.id + 1);
-                    if (actualEndSlot) {
-                        setSelectedEndTime(actualEndSlot);
-                    } else {
-                        setSelectedEndTime({ ...slot, id: slot.id + 1 });
-                    }
+                if (slotsToCheck.every(s => s.available)) {
+                    const newEnd = timeSlots.find(s => s.id === slot.id + 1);
+                    setSelectedEndTime(newEnd || { ...slot, id: slot.id + 1 });
                 }
                 return;
             }
 
-            // If clicking within the range (but not the last slot) - do nothing
-            if (slot.id > selectedStartTime.id && slot.id < lastIncludedSlotId) {
+            // Clicking INSIDE the range (not start, not last) —
+            // trim the end to this slot (inclusive), keeping everything before it
+            if (slot.id > selectedStartTime.id && slot.id < lastIncludedId) {
+                const newEnd = timeSlots.find(s => s.id === slot.id + 1);
+                setSelectedEndTime(newEnd || { ...slot, id: slot.id + 1 });
                 return;
             }
 
-            // If clicking before start - restart from this slot with auto 1-hour
+            // Clicking before start — restart from this slot
             if (slot.id < selectedStartTime.id) {
                 setSelectedStartTime(slot);
                 const nextSlot = timeSlots.find(s => s.id === slot.id + 1);
-                if (nextSlot) {
-                    setSelectedEndTime(nextSlot);
-                } else {
-                    setSelectedEndTime({ ...slot, id: slot.id + 1 });
-                }
+                setSelectedEndTime(nextSlot || { ...slot, id: slot.id + 1 });
                 return;
             }
         }
@@ -230,8 +168,7 @@ function Court({
 
     const isSlotInRange = (slot) => {
         if (!selectedStartTime || !selectedEndTime) return false;
-        const inRange = slot.id >= selectedStartTime.id && slot.id < selectedEndTime.id;
-        return inRange && slot.available;
+        return slot.id >= selectedStartTime.id && slot.id < selectedEndTime.id && slot.available;
     };
 
     const getBookingDuration = () => {
@@ -239,18 +176,14 @@ function Court({
         return selectedEndTime.id - selectedStartTime.id;
     };
 
-    // Calculate total price for selected time range
     const getTotalPrice = () => {
         if (!selectedStartTime || !selectedEndTime) return 0;
-
-        let totalPrice = 0;
+        let total = 0;
         for (let i = selectedStartTime.id; i < selectedEndTime.id; i++) {
             const slot = timeSlots.find(s => s.id === i);
-            if (slot) {
-                totalPrice += slot.price;
-            }
+            if (slot) total += slot.price;
         }
-        return totalPrice;
+        return total;
     };
 
     return (
@@ -264,7 +197,6 @@ function Court({
                     >
                         <div className="court-card-inner">
                             <div className="court-number">{court.name.replace('Court ', '')}</div>
-
                             <div className="court-info">
                                 <h3 className="court-name">{court.name}</h3>
                                 <span className="court-status">
@@ -272,7 +204,6 @@ function Court({
                                     Available
                                 </span>
                             </div>
-
                             {selectedCourt?.id === court.id && (
                                 <div className="selected-indicator">
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -283,14 +214,9 @@ function Court({
                         </div>
                     </div>
 
-                    {/* Time slots appear below selected court */}
                     {selectedCourt?.id === court.id && (
                         <div className="inline-time-selection">
-                            {error && (
-                                <div className="error-message">
-                                    {error}
-                                </div>
-                            )}
+                            {error && <div className="error-message">{error}</div>}
 
                             {selectedStartTime && selectedEndTime && (
                                 <div className="time-summary">
@@ -306,9 +232,7 @@ function Court({
                                             <span className="duration-badge">
                                                 {getBookingDuration()} {getBookingDuration() === 1 ? 'hour' : 'hours'}
                                             </span>
-                                            <span className="price-badge">
-                                                ₾{getTotalPrice()}
-                                            </span>
+                                            <span className="price-badge">₾{getTotalPrice()}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -322,14 +246,8 @@ function Court({
                             ) : (
                                 <>
                                     <div className="time-slots-header">
-                                        <p className="time-slots-info">
-                                            Click hours to select your booking time
-                                        </p>
-                                        <button
-                                            className="refresh-slots-btn"
-                                            onClick={fetchAvailableTimeSlots}
-                                            title="Refresh availability"
-                                        >
+                                        <p className="time-slots-info">Click hours to select your booking time</p>
+                                        <button className="refresh-slots-btn" onClick={fetchAvailableTimeSlots} title="Refresh availability">
                                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                 <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -338,10 +256,7 @@ function Court({
                                     </div>
                                     <div className="time-slots-grid">
                                         {timeSlots.map((slot) => {
-                                            const inRange = isSlotInRange(slot);
-                                            const isStart = selectedStartTime?.id === slot.id;
-                                            const isIncluded = inRange || isStart;
-
+                                            const isIncluded = isSlotInRange(slot) || selectedStartTime?.id === slot.id;
                                             return (
                                                 <button
                                                     key={slot.id}
@@ -354,9 +269,7 @@ function Court({
                                                         <span className="slot-price">₾{slot.price}</span>
                                                     )}
                                                     {!slot.available && <span className="slot-status">Booked</span>}
-                                                    {slot.available && isIncluded && (
-                                                        <div className="range-indicator"></div>
-                                                    )}
+                                                    {slot.available && isIncluded && <div className="range-indicator"></div>}
                                                 </button>
                                             );
                                         })}
